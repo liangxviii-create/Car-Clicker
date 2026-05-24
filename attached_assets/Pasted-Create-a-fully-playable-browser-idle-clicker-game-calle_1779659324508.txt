@@ -1,0 +1,140 @@
+Create a fully playable browser idle/clicker game called “Car Clicker”.
+
+STYLE:
+- Modern dark UI
+- Animated glowing buttons
+- Smooth transitions
+- Car-themed background
+- Mobile-friendly
+- Feels polished like a real Steam idle game
+- Add satisfying click animations and floating money text
+
+CORE GAMEPLAY:
+- Player clicks on a car to earn money
+- Money can buy upgrades and passive income
+- Numbers scale into millions, billions, trillions, etc.
+- Autosave system using localStorage
+- Add sound effects for clicks and purchases
+- Add achievement system
+- Add prestige/rebirth system called “Manufacturer Contracts”
+
+CURRENCIES:
+- Cash
+- Reputation
+- Manufacturer Tokens (prestige currency)
+
+MAIN MENU TABS:
+- Garage
+- Dealership
+- Factory
+- Upgrades
+- Racing
+- Prestige
+- Achievements
+- Settings
+
+GARAGE SYSTEM:
+Player unlocks and collects cars over time.
+
+STARTER CARS:
+- Honda Civic
+- Toyota Corolla
+- Ford Focus
+- Volkswagen Golf
+
+SPORTS CARS:
+- Nissan 350Z
+- Subaru WRX STI
+- Toyota Supra MK4
+- Mazda RX-7
+- Mitsubishi Lancer Evo
+
+MUSCLE CARS:
+- Dodge Charger Hellcat
+- Ford Mustang GT
+- Chevrolet Camaro ZL1
+- Dodge Challenger Demon
+
+SUPERCARS:
+- Ferrari 488 Pista
+- Lamborghini Huracan
+- McLaren 720S
+- Porsche 911 GT3 RS
+- Audi R8
+
+HYPERCARS:
+- Bugatti Chiron
+- Koenigsegg Jesko
+- Rimac Nevera
+- Pagani Huayra
+- Aston Martin Valkyrie
+- McLaren P1
+- Ferrari LaFerrari
+- Porsche 918 Spyder
+
+ULTIMATE TIER:
+- Formula 1 Car
+- Le Mans Prototype
+- Jet-powered car
+- Concept hypercar
+- Futuristic AI race car
+
+UPGRADES:
+- Better engines
+- Turbo kits
+- Racing tires
+- Nitrous
+- AI drivers
+- Sponsorships
+- Car factories
+- Mega factories
+- Luxury dealerships
+- Racing teams
+
+PASSIVE INCOME:
+- Street racers
+- Dealerships
+- Factories
+- Motorsport divisions
+- Global car company
+- Hypercar research labs
+
+RACING SYSTEM:
+- Drag races
+- Circuit races
+- Drift competitions
+- AI opponents
+- Win bonus money and reputation
+
+SPECIAL FEATURES:
+- Random events
+- Car crashes
+- Sponsorship offers
+- Stock market for car companies
+- Daily rewards
+- Weather effects
+- Unlockable music tracks
+- Garage customization
+
+VISUAL EFFECTS:
+- Particle effects
+- Screen shake on big unlocks
+- Animated backgrounds
+- Car rarity colors
+- Neon glow UI
+
+TECH:
+- Use HTML, CSS, and JavaScript only
+- Organize into index.html, style.css, and script.js
+- Use clean commented code
+- No frameworks
+- Must run locally in browser
+
+EXTRA:
+- Add funny fake car news headlines
+- Add loading screen
+- Add rare golden car event
+- Add leaderboard mockup
+- Add “insane mode” late-game scaling
+
+Make the game feel addictive, satisfying, and polished.

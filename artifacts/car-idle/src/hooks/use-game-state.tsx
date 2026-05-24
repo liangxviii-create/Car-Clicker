@@ -1,8 +1,9 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useRef } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useRef, useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useUpsertPlayerSave, useGetPlayerSave, useSubmitScore } from "@workspace/api-client-react";
+import { useUpsertPlayerSave, useSubmitScore } from "@workspace/api-client-react";
 import { CARS } from "@/lib/cars";
 import { playEngineRev, playPurchaseSound } from "@/lib/audio";
+import { checkAchievements, ACHIEVEMENTS } from "@/lib/achievements";
 
 export interface GarageCustomization {
   color: string;
@@ -20,6 +21,8 @@ export interface GameState {
   selectedCar: string | null;
   garageCustomizations: Record<string, GarageCustomization>;
   clickCount: number;
+  unlockedAchievements: string[];
+  raceWins: number;
 }
 
 const DEFAULT_STATE: GameState = {
@@ -32,6 +35,8 @@ const DEFAULT_STATE: GameState = {
   selectedCar: null,
   garageCustomizations: {},
   clickCount: 0,
+  unlockedAchievements: [],
+  raceWins: 0,
 };
 
 interface GameContextType {
@@ -46,11 +51,17 @@ interface GameContextType {
   prestige: () => void;
   updateCustomization: (carId: string, custom: Partial<GarageCustomization>) => void;
   addBonusMiles: (amount: number) => void;
+  triggerAchievementCheck: (flags?: Parameters<typeof checkAchievements>[2]) => string[];
   ready: boolean;
   refreshSave: () => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
+
+let toastFn: ((title: string, description: string) => void) | null = null;
+export function setAchievementToastFn(fn: typeof toastFn) {
+  toastFn = fn;
+}
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GameState>(DEFAULT_STATE);
@@ -68,8 +79,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(saved);
         if (!parsed.playerId) parsed.playerId = uuidv4();
+        if (!parsed.unlockedAchievements) parsed.unlockedAchievements = [];
+        if (!parsed.raceWins) parsed.raceWins = 0;
         setState({ ...DEFAULT_STATE, ...parsed });
-      } catch (e) {
+      } catch {
         setState({ ...DEFAULT_STATE, playerId: uuidv4() });
       }
     } else {
@@ -78,7 +91,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }, []);
 
-  // Sync state to local storage when it changes
+  // Sync to local storage
   useEffect(() => {
     if (!ready) return;
     localStorage.setItem("revmaster_save", JSON.stringify(state));
@@ -96,6 +109,33 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const car = CARS.find((c) => c.id === carId);
     return acc + (car ? car.clickMultiplier : 0);
   }, 1) * prestigeMultiplier;
+
+  // Check achievements helper
+  const triggerAchievementCheck = useCallback(
+    (flags?: Parameters<typeof checkAchievements>[2]): string[] => {
+      const s = stateRef.current;
+      const newOnes = checkAchievements(
+        { ...s, unlockedAchievements: s.unlockedAchievements },
+        milesPerSecond,
+        flags
+      );
+      if (newOnes.length > 0) {
+        setState(prev => ({
+          ...prev,
+          unlockedAchievements: [...new Set([...prev.unlockedAchievements, ...newOnes])],
+        }));
+        // Show toast for each new achievement
+        newOnes.forEach(id => {
+          const ach = ACHIEVEMENTS.find(a => a.id === id);
+          if (ach && toastFn) {
+            toastFn(`${ach.icon} Achievement Unlocked!`, ach.name);
+          }
+        });
+      }
+      return newOnes;
+    },
+    [milesPerSecond]
+  );
 
   // Auto save to server loop
   useEffect(() => {
@@ -118,7 +158,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(interval);
   }, [ready, state.playerId, state.playerName]);
 
-  // Clicker Loop
+  // Passive income loop
   useEffect(() => {
     if (!ready || milesPerSecond === 0) return;
     let lastTime = performance.now();
@@ -127,50 +167,56 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const tick = (time: number) => {
       const delta = (time - lastTime) / 1000;
       lastTime = time;
-      
       if (delta > 0 && delta < 1) {
         const toAdd = milesPerSecond * delta;
         setState(prev => ({
           ...prev,
           miles: prev.miles + toAdd,
-          totalMilesEver: prev.totalMilesEver + toAdd
+          totalMilesEver: prev.totalMilesEver + toAdd,
         }));
       }
       frameId = requestAnimationFrame(tick);
     };
-    
+
     frameId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frameId);
   }, [ready, milesPerSecond]);
 
+  // Periodic achievement check (non-event based)
+  useEffect(() => {
+    if (!ready) return;
+    const interval = setInterval(() => triggerAchievementCheck(), 5000);
+    return () => clearInterval(interval);
+  }, [ready, triggerAchievementCheck]);
+
   const setPlayerName = (name: string) => {
-    setState((prev) => ({ ...prev, playerName: name }));
+    setState(prev => ({ ...prev, playerName: name }));
   };
 
   const clickMainCar = () => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       miles: prev.miles + clickValue,
       totalMilesEver: prev.totalMilesEver + clickValue,
       clickCount: prev.clickCount + 1,
     }));
+    triggerAchievementCheck();
   };
 
   const buyCar = (carId: string) => {
     const car = CARS.find(c => c.id === carId);
     if (!car) return;
-    
     const count = state.ownedCars.filter(id => id === carId).length;
     const cost = Math.floor(car.baseCost * Math.pow(1.15, count));
-
     if (state.miles >= cost) {
       playPurchaseSound();
       setState(prev => ({
         ...prev,
         miles: prev.miles - cost,
         ownedCars: [...prev.ownedCars, carId],
-        selectedCar: prev.selectedCar || carId
+        selectedCar: prev.selectedCar || carId,
       }));
+      triggerAchievementCheck();
     }
   };
 
@@ -187,40 +233,43 @@ export function GameProvider({ children }: { children: ReactNode }) {
       garageCustomizations: {
         ...prev.garageCustomizations,
         [carId]: {
-          ...(prev.garageCustomizations[carId] || { color: "#ff0000", decals: "none", rims: "stock" }),
-          ...custom
-        }
-      }
+          ...(prev.garageCustomizations[carId] || { color: "#cc2200", decals: "None", rims: "Stock" }),
+          ...custom,
+        },
+      },
     }));
+    triggerAchievementCheck({ customized: true });
   };
 
   const addBonusMiles = (amount: number) => {
     setState(prev => ({
       ...prev,
       miles: prev.miles + amount,
-      totalMilesEver: prev.totalMilesEver + amount
+      totalMilesEver: prev.totalMilesEver + amount,
     }));
+    triggerAchievementCheck();
   };
 
   const prestige = () => {
     const required = 1000000 * Math.pow(10, state.prestigeLevel);
     if (state.totalMilesEver >= required) {
       playPurchaseSound();
+      const newPrestigeLevel = state.prestigeLevel + 1;
       setState(prev => ({
         ...DEFAULT_STATE,
         playerId: prev.playerId,
         playerName: prev.playerName,
-        prestigeLevel: prev.prestigeLevel + 1,
+        prestigeLevel: newPrestigeLevel,
         totalMilesEver: prev.totalMilesEver,
-        garageCustomizations: prev.garageCustomizations // Keep customizations
+        garageCustomizations: prev.garageCustomizations,
+        unlockedAchievements: prev.unlockedAchievements,
+        raceWins: prev.raceWins,
       }));
+      triggerAchievementCheck();
     }
   };
 
-  // Provide a function to trigger a forced load/save check
-  const refreshSave = () => {
-    // Only fetch manually if needed, normally automatic.
-  };
+  const refreshSave = () => {};
 
   return (
     <GameContext.Provider
@@ -236,8 +285,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         prestige,
         updateCustomization,
         addBonusMiles,
+        triggerAchievementCheck,
         ready,
-        refreshSave
+        refreshSave,
       }}
     >
       {children}
@@ -247,8 +297,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
 export function useGameState() {
   const context = useContext(GameContext);
-  if (!context) {
-    throw new Error("useGameState must be used within a GameProvider");
-  }
+  if (!context) throw new Error("useGameState must be used within a GameProvider");
   return context;
 }
