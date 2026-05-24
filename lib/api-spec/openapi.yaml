@@ -1,22 +1,26 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Car Idle Game API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: leaderboard
+    description: Global leaderboard
+  - name: saves
+    description: Player game saves
+  - name: trades
+    description: Multiplayer car trading
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +28,198 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [leaderboard]
+      summary: Get top players by total miles driven
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: List of top scores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+    post:
+      operationId: submitScore
+      tags: [leaderboard]
+      summary: Submit or update a player score
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScoreInput"
+      responses:
+        "200":
+          description: Score submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeaderboardEntry"
+
+  /leaderboard/rank/{playerId}:
+    get:
+      operationId: getPlayerRank
+      tags: [leaderboard]
+      summary: Get a specific player's rank and score
+      parameters:
+        - in: path
+          name: playerId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Player rank
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlayerRank"
+        "404":
+          description: Player not found
+
+  /saves/{playerId}:
+    get:
+      operationId: getPlayerSave
+      tags: [saves]
+      summary: Load a player's game save
+      parameters:
+        - in: path
+          name: playerId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Player save data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameSave"
+        "404":
+          description: No save found
+    put:
+      operationId: upsertPlayerSave
+      tags: [saves]
+      summary: Save or update player game state
+      parameters:
+        - in: path
+          name: playerId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GameSaveInput"
+      responses:
+        "200":
+          description: Save updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameSave"
+
+  /trades:
+    get:
+      operationId: listTrades
+      tags: [trades]
+      summary: List open trade offers
+      parameters:
+        - in: query
+          name: playerId
+          schema:
+            type: string
+          description: Filter by offering player
+      responses:
+        "200":
+          description: List of trades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Trade"
+    post:
+      operationId: createTrade
+      tags: [trades]
+      summary: Create a trade offer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TradeInput"
+      responses:
+        "201":
+          description: Trade created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trade"
+
+  /trades/{tradeId}/accept:
+    post:
+      operationId: acceptTrade
+      tags: [trades]
+      summary: Accept a trade offer
+      parameters:
+        - in: path
+          name: tradeId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TradeAcceptInput"
+      responses:
+        "200":
+          description: Trade accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trade"
+        "404":
+          description: Trade not found
+        "409":
+          description: Trade already completed
+
+  /trades/{tradeId}:
+    delete:
+      operationId: cancelTrade
+      tags: [trades]
+      summary: Cancel a trade offer
+      parameters:
+        - in: path
+          name: tradeId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Trade cancelled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Trade"
+        "404":
+          description: Trade not found
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +230,114 @@ components:
       required:
         - status
 
+    LeaderboardEntry:
+      type: object
+      required: [id, playerId, playerName, totalMiles, prestigeLevel, carsOwned, updatedAt]
+      properties:
+        id:
+          type: integer
+        playerId:
+          type: string
+        playerName:
+          type: string
+        totalMiles:
+          type: number
+        prestigeLevel:
+          type: integer
+        carsOwned:
+          type: integer
+        updatedAt:
+          type: string
+
+    ScoreInput:
+      type: object
+      required: [playerId, playerName, totalMiles, prestigeLevel, carsOwned]
+      properties:
+        playerId:
+          type: string
+        playerName:
+          type: string
+        totalMiles:
+          type: number
+        prestigeLevel:
+          type: integer
+        carsOwned:
+          type: integer
+
+    PlayerRank:
+      type: object
+      required: [rank, entry]
+      properties:
+        rank:
+          type: integer
+        entry:
+          $ref: "#/components/schemas/LeaderboardEntry"
+
+    GameSave:
+      type: object
+      required: [id, playerId, saveData, updatedAt]
+      properties:
+        id:
+          type: integer
+        playerId:
+          type: string
+        saveData:
+          type: string
+        updatedAt:
+          type: string
+
+    GameSaveInput:
+      type: object
+      required: [saveData]
+      properties:
+        saveData:
+          type: string
+
+    Trade:
+      type: object
+      required: [id, offerPlayerId, offerPlayerName, offeredCarId, offeredCarName, wantedCarId, wantedCarName, status, createdAt]
+      properties:
+        id:
+          type: integer
+        offerPlayerId:
+          type: string
+        offerPlayerName:
+          type: string
+        offeredCarId:
+          type: string
+        offeredCarName:
+          type: string
+        wantedCarId:
+          type: string
+        wantedCarName:
+          type: string
+        acceptPlayerId:
+          type: ["string", "null"]
+        status:
+          type: string
+        createdAt:
+          type: string
+
+    TradeInput:
+      type: object
+      required: [offerPlayerId, offerPlayerName, offeredCarId, offeredCarName, wantedCarId, wantedCarName]
+      properties:
+        offerPlayerId:
+          type: string
+        offerPlayerName:
+          type: string
+        offeredCarId:
+          type: string
+        offeredCarName:
+          type: string
+        wantedCarId:
+          type: string
+        wantedCarName:
+          type: string
+
+    TradeAcceptInput:
+      type: object
+      required: [acceptPlayerId]
+      properties:
+        acceptPlayerId:
+          type: string
