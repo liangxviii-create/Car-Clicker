@@ -18,7 +18,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   absolute: "#cc0044",
   aircraft:         "#2277bb",
   extreme_aircraft: "#556b2f",
-  missile:          "#cc4400",
+  missile:     "#cc4400",
+  spacecraft:  "#0b3d91",
 };
 
 function CarCard({ car }: { car: Car }) {
@@ -130,7 +131,8 @@ const CATEGORIES = [
   { id: "absolute", label: "💀 Absolute" },
   { id: "aircraft",         label: "✈️ Aircraft" },
   { id: "extreme_aircraft", label: "🛡️ Extreme" },
-  { id: "missile",          label: "🚀 Missiles" },
+  { id: "missile",     label: "🚀 Missiles" },
+  { id: "spacecraft",  label: "🛸 Spacecraft" },
 ];
 
 const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
@@ -141,7 +143,8 @@ const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
   absolute: { text: "💀 The Absolute tier — race cars, jet-powered trucks, and machines that defy physics. Requires deep Prestige.", color: "border-red-500/30 bg-red-500/5 text-red-400" },
   aircraft:         { text: "✈️ Aircraft — commercial jetliners, WWII fighters, and strategic bombers. Prestige-locked and astronomically powerful.", color: "border-sky-500/30 bg-sky-500/5 text-sky-400" },
   extreme_aircraft: { text: "🛡️ Extreme Aircraft — Cold War interceptors, stealth fighters, and hypersonic experimentals. The most destructive machines ever built.", color: "border-lime-700/40 bg-lime-900/10 text-lime-500" },
-  missile:          { text: "🚀 Missiles — from shoulder-fired anti-tank rounds to nuclear ICBMs. The K-4 tops out at 8 Trillion miles and 40B/s. You'll need deep Prestige.", color: "border-orange-600/40 bg-orange-900/10 text-orange-400" },
+  missile:    { text: "🚀 Missiles — from shoulder-fired anti-tank rounds to nuclear ICBMs. The K-4 tops out at 8 Trillion miles and 40B/s. You'll need deep Prestige.", color: "border-orange-600/40 bg-orange-900/10 text-orange-400" },
+  spacecraft: { text: "🛸 Spacecraft — historic missions from Vostok 1 to Artemis II. Artemis II tops the entire game at 100 Quadrillion miles and 500B/s. Prestige 3–7 required.", color: "border-blue-800/40 bg-blue-950/20 text-blue-300" },
 };
 
 export default function Dealership() {
