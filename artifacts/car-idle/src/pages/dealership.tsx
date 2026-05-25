@@ -15,6 +15,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   luxury:   "#1a7a4a",
   ev:       "#0099cc",
   retro:    "#8b6914",
+  absolute: "#cc0044",
+  aircraft: "#2277bb",
 };
 
 function CarCard({ car }: { car: Car }) {
@@ -124,6 +126,7 @@ const CATEGORIES = [
   { id: "retro",    label: "Retro" },
   { id: "hypercar", label: "🔥 Hyper" },
   { id: "absolute", label: "💀 Absolute" },
+  { id: "aircraft", label: "✈️ Aircraft" },
 ];
 
 const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
@@ -132,6 +135,7 @@ const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
   ev:       { text: "⚡ Pure electric speed — zero emissions, maximum torque.", color: "border-cyan-500/30 bg-cyan-500/5 text-cyan-400" },
   retro:    { text: "🕰️ Classic icons from the golden age of automotive design.", color: "border-yellow-600/30 bg-yellow-600/5 text-yellow-500" },
   absolute: { text: "💀 The Absolute tier — race cars, jet-powered trucks, and machines that defy physics. Requires deep Prestige.", color: "border-red-500/30 bg-red-500/5 text-red-400" },
+  aircraft: { text: "✈️ Aircraft — commercial jetliners, WWII fighters, and strategic bombers. Prestige-locked and astronomically powerful.", color: "border-sky-500/30 bg-sky-500/5 text-sky-400" },
 };
 
 export default function Dealership() {
