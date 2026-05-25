@@ -19,7 +19,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   aircraft:         "#2277bb",
   extreme_aircraft: "#556b2f",
   missile:     "#cc4400",
-  spacecraft:  "#0b3d91",
+  spacecraft:    "#0b3d91",
+  space_objects: "#4b0082",
 };
 
 function CarCard({ car }: { car: Car }) {
@@ -132,7 +133,8 @@ const CATEGORIES = [
   { id: "aircraft",         label: "✈️ Aircraft" },
   { id: "extreme_aircraft", label: "🛡️ Extreme" },
   { id: "missile",     label: "🚀 Missiles" },
-  { id: "spacecraft",  label: "🛸 Spacecraft" },
+  { id: "spacecraft",    label: "🛸 Spacecraft" },
+  { id: "space_objects", label: "🌌 Space Objects" },
 ];
 
 const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
@@ -144,7 +146,8 @@ const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
   aircraft:         { text: "✈️ Aircraft — commercial jetliners, WWII fighters, and strategic bombers. Prestige-locked and astronomically powerful.", color: "border-sky-500/30 bg-sky-500/5 text-sky-400" },
   extreme_aircraft: { text: "🛡️ Extreme Aircraft — Cold War interceptors, stealth fighters, and hypersonic experimentals. The most destructive machines ever built.", color: "border-lime-700/40 bg-lime-900/10 text-lime-500" },
   missile:    { text: "🚀 Missiles — from shoulder-fired anti-tank rounds to nuclear ICBMs. The K-4 tops out at 8 Trillion miles and 40B/s. You'll need deep Prestige.", color: "border-orange-600/40 bg-orange-900/10 text-orange-400" },
-  spacecraft: { text: "🛸 Spacecraft — historic missions from Vostok 1 to Artemis II. Artemis II tops the entire game at 100 Quadrillion miles and 500B/s. Prestige 3–7 required.", color: "border-blue-800/40 bg-blue-950/20 text-blue-300" },
+  spacecraft:    { text: "🛸 Spacecraft — historic missions from Vostok 1 to Artemis II. Artemis II tops the entire game at 100 Quadrillion miles and 500B/s. Prestige 3–7 required.", color: "border-blue-800/40 bg-blue-950/20 text-blue-300" },
+  space_objects: { text: "🌌 Space Objects — from Mercury to the Andromeda Galaxy. The ultimate tier: Andromeda tops out at 10 Sextillion miles and 50Qt/s. Requires Prestige 7–9.", color: "border-purple-800/40 bg-purple-950/20 text-purple-300" },
 };
 
 export default function Dealership() {
