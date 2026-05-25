@@ -123,6 +123,7 @@ const CATEGORIES = [
   { id: "ev",       label: "⚡ EV" },
   { id: "retro",    label: "Retro" },
   { id: "hypercar", label: "🔥 Hyper" },
+  { id: "absolute", label: "💀 Absolute" },
 ];
 
 const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
@@ -130,6 +131,7 @@ const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
   luxury:   { text: "🏆 Luxury SUVs and ultra-premium grand tourers. Opulence earns miles too.", color: "border-emerald-500/30 bg-emerald-500/5 text-emerald-400" },
   ev:       { text: "⚡ Pure electric speed — zero emissions, maximum torque.", color: "border-cyan-500/30 bg-cyan-500/5 text-cyan-400" },
   retro:    { text: "🕰️ Classic icons from the golden age of automotive design.", color: "border-yellow-600/30 bg-yellow-600/5 text-yellow-500" },
+  absolute: { text: "💀 The Absolute tier — race cars, jet-powered trucks, and machines that defy physics. Requires deep Prestige.", color: "border-red-500/30 bg-red-500/5 text-red-400" },
 };
 
 export default function Dealership() {

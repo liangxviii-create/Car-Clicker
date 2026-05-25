@@ -17,7 +17,7 @@ const GEAR_WINDOWS = [
 ];
 
 export default function Race() {
-  const { state, addBonusMiles } = useGameState();
+  const { state, addBonusMiles, updateChallengeProgress } = useGameState();
   const [raceStatus, setRaceStatus] = useState<RaceStatus>("idle");
   const [countdown, setCountdown] = useState(3);
   const [gear, setGear] = useState(0);
@@ -132,6 +132,7 @@ export default function Race() {
         setReward(rewardAmt);
         playPurchaseSound();
         addBonusMiles(rewardAmt);
+        updateChallengeProgress("race_wins", 1);
       }
       return Math.min(newX, 95);
     });

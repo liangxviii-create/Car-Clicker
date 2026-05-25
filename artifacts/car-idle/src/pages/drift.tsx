@@ -17,7 +17,7 @@ interface Corner {
 }
 
 export default function Drift() {
-  const { addBonusMiles } = useGameState();
+  const { addBonusMiles, updateChallengeProgress } = useGameState();
   const [status, setStatus] = useState<GameStatus>("idle");
   const [lane, setLane] = useState<Lane>("center");
   const [score, setScore] = useState(0);
@@ -42,7 +42,8 @@ export default function Drift() {
     if (gameRef.current) clearInterval(gameRef.current);
     setStatus("finished");
     addBonusMiles(score);
-  }, [score, addBonusMiles]);
+    updateChallengeProgress("drift_score", score);
+  }, [score, addBonusMiles, updateChallengeProgress]);
 
   // Spawn corners
   useEffect(() => {

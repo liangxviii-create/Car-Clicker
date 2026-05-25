@@ -14,6 +14,7 @@ import LeaderboardPage from "@/pages/leaderboard";
 import Trades from "@/pages/trades";
 import Prestige from "@/pages/prestige";
 import Achievements from "@/pages/achievements";
+import Challenges from "@/pages/challenges";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 
@@ -46,6 +47,7 @@ function Router() {
         <Route path="/leaderboard" component={LeaderboardPage} />
         <Route path="/trades" component={Trades} />
         <Route path="/achievements" component={Achievements} />
+        <Route path="/challenges" component={Challenges} />
         <Route path="/prestige" component={Prestige} />
         <Route component={NotFound} />
       </Switch>
