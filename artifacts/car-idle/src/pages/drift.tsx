@@ -8,7 +8,6 @@ type Lane = "left" | "center" | "right";
 type GameStatus = "idle" | "playing" | "finished";
 
 const LANE_X: Record<Lane, number> = { left: 30, center: 50, right: 70 };
-const CORNER_DURATIONS = 2000;
 
 interface Corner {
   id: number;
@@ -25,10 +24,25 @@ export default function Drift() {
   const [combo, setCombo] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [hitEffect, setHitEffect] = useState<"success" | "miss" | null>(null);
-  const gameRef = useRef<NodeJS.Timeout | null>(null);
   const cornerIdRef = useRef(0);
 
+  // Refs so endGame always reads the latest values without changing identity
+  const scoreRef = useRef(0);
+  const comboRef = useRef(0);
+  const statusRef = useRef<GameStatus>("idle");
+
+  const endGame = useCallback(() => {
+    setStatus("finished");
+    statusRef.current = "finished";
+    const finalScore = scoreRef.current;
+    addBonusMiles(finalScore);
+    updateChallengeProgress("drift_score", finalScore);
+  }, [addBonusMiles, updateChallengeProgress]);
+
   const startGame = () => {
+    scoreRef.current = 0;
+    comboRef.current = 0;
+    statusRef.current = "playing";
     setStatus("playing");
     setScore(0);
     setCombo(0);
@@ -37,13 +51,6 @@ export default function Drift() {
     setCorners([]);
     playEngineRev();
   };
-
-  const endGame = useCallback(() => {
-    if (gameRef.current) clearInterval(gameRef.current);
-    setStatus("finished");
-    addBonusMiles(score);
-    updateChallengeProgress("drift_score", score);
-  }, [score, addBonusMiles, updateChallengeProgress]);
 
   // Spawn corners
   useEffect(() => {
@@ -66,7 +73,7 @@ export default function Drift() {
           .map(c => ({ ...c, y: c.y + 4 }))
           .filter(c => {
             if (c.y > 90) {
-              // Missed corner
+              comboRef.current = 0;
               setCombo(0);
               setHitEffect("miss");
               setTimeout(() => setHitEffect(null), 400);
@@ -79,9 +86,10 @@ export default function Drift() {
     return () => clearInterval(interval);
   }, [status]);
 
-  // Countdown
+  // Countdown — only depends on status and endGame (stable); does NOT restart on score changes
   useEffect(() => {
     if (status !== "playing") return;
+    setTimeLeft(30);
     const interval = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -95,23 +103,28 @@ export default function Drift() {
     return () => clearInterval(interval);
   }, [status, endGame]);
 
-  const handleLaneChange = (newLane: Lane) => {
-    if (status !== "playing") return;
+  const handleLaneChange = useCallback((newLane: Lane) => {
+    if (statusRef.current !== "playing") return;
     setLane(newLane);
     playTireScreech();
 
-    // Check if any corner is in the hit zone (y between 70-85)
-    const hitCorner = corners.find(c => c.lane === newLane && c.y >= 65 && c.y <= 90);
-    if (hitCorner) {
-      const newCombo = combo + 1;
-      setCombo(newCombo);
-      const points = Math.floor(100 * (1 + newCombo * 0.1));
-      setScore(prev => prev + points);
-      setCorners(prev => prev.filter(c => c.id !== hitCorner.id));
-      setHitEffect("success");
-      setTimeout(() => setHitEffect(null), 300);
-    }
-  };
+    setCorners(prev => {
+      const hitCorner = prev.find(c => c.lane === newLane && c.y >= 65 && c.y <= 92);
+      if (hitCorner) {
+        const newCombo = comboRef.current + 1;
+        comboRef.current = newCombo;
+        setCombo(newCombo);
+        const points = Math.floor(100 * (1 + newCombo * 0.1));
+        const newScore = scoreRef.current + points;
+        scoreRef.current = newScore;
+        setScore(newScore);
+        setHitEffect("success");
+        setTimeout(() => setHitEffect(null), 300);
+        return prev.filter(c => c.id !== hitCorner.id);
+      }
+      return prev;
+    });
+  }, []);
 
   // Keyboard controls
   useEffect(() => {
@@ -122,7 +135,7 @@ export default function Drift() {
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [status, lane, combo, corners]);
+  }, [handleLaneChange]);
 
   return (
     <div className="flex flex-col items-center gap-6 animated-bg">
@@ -145,10 +158,11 @@ export default function Drift() {
 
       {status === "finished" && (
         <div className="text-center flex flex-col items-center gap-4">
-          <div className="text-5xl font-black text-accent neon-text-accent">{formatNumber(score)}</div>
-          <div className="text-muted-foreground uppercase tracking-widest text-sm">Bonus Miles Earned</div>
+          <div className="text-2xl text-muted-foreground uppercase tracking-widest">Session Complete!</div>
+          <div className="text-6xl font-black text-accent neon-text-accent">+{formatNumber(score)}</div>
+          <div className="text-muted-foreground uppercase tracking-widest text-sm">Bonus Miles Added to Your Total</div>
           <Button onClick={startGame} size="lg" className="bg-primary text-primary-foreground font-black uppercase tracking-widest px-8">
-            Race Again
+            Drift Again
           </Button>
         </div>
       )}
