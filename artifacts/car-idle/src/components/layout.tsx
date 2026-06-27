@@ -32,7 +32,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <header className="h-14 border-b border-border/50 bg-background/80 backdrop-blur-md sticky top-0 z-50 flex items-center justify-between px-4 lg:px-8">
         <div className="flex items-center gap-3">
           <h1 className="text-lg font-black uppercase tracking-tighter text-primary neon-text-primary hidden sm:block">
-            RevMaster
+            Vehicle Clicker
           </h1>
           {state.prestigeLevel > 0 && (
             <div className="text-[10px] font-black text-amber-500 border border-amber-500/40 px-1.5 py-0.5 rounded uppercase tracking-widest">
