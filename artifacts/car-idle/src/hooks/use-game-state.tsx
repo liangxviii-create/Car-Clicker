@@ -16,6 +16,20 @@ export interface GarageCustomization {
   rims: string;
 }
 
+export interface CustomVehicle {
+  id: string;
+  name: string;
+  brand: string;
+  horsepower: number;
+  topSpeed: number;
+  engine: string;
+  description: string;
+  rarity: "common" | "rare" | "legendary" | "prestige";
+  unlockCost: number;
+  imagePath?: string;
+  createdAt: number;
+}
+
 export interface GameState {
   playerId: string;
   playerName: string | null;
@@ -30,6 +44,9 @@ export interface GameState {
   raceWins: number;
   dailyChallenges: DailyChallenge[];
   dailyChallengeDate: string;
+  customVehicles: CustomVehicle[];
+  ownedCustomVehicles: string[];
+  lastOnlineTime: number;
 }
 
 const DEFAULT_STATE: GameState = {
@@ -46,6 +63,9 @@ const DEFAULT_STATE: GameState = {
   raceWins: 0,
   dailyChallenges: [],
   dailyChallengeDate: "",
+  customVehicles: [],
+  ownedCustomVehicles: [],
+  lastOnlineTime: Date.now(),
 };
 
 interface GameContextType {
@@ -62,8 +82,13 @@ interface GameContextType {
   addBonusMiles: (amount: number) => void;
   triggerAchievementCheck: (flags?: Parameters<typeof checkAchievements>[2]) => string[];
   updateChallengeProgress: (type: string, amount: number) => void;
+  addCustomVehicle: (v: Omit<CustomVehicle, "id" | "createdAt">) => void;
+  deleteCustomVehicle: (id: string) => void;
+  buyCustomVehicle: (id: string) => void;
   ready: boolean;
   refreshSave: () => void;
+  offlineEarnings: number | null;
+  dismissOfflineEarnings: () => void;
 }
 
 const GameContext = createContext<GameContextType | null>(null);
@@ -81,19 +106,47 @@ function freshDailyChallenges(dateKey: string): DailyChallenge[] {
   }));
 }
 
+function calcMilesPerSecond(ownedCars: string[], customVehicles: CustomVehicle[], ownedCustomVehicles: string[], prestigeMultiplier: number) {
+  const carMps = ownedCars.reduce((acc, carId) => {
+    const car = CARS.find(c => c.id === carId);
+    return acc + (car ? car.milesPerSecond * prestigeMultiplier : 0);
+  }, 0);
+  const customMps = ownedCustomVehicles.reduce((acc, id) => {
+    const v = customVehicles.find(cv => cv.id === id);
+    return acc + (v ? v.horsepower * 10 * prestigeMultiplier : 0);
+  }, 0);
+  return carMps + customMps;
+}
+
 export function GameProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GameState>(DEFAULT_STATE);
   const [ready, setReady] = useState(false);
+  const [offlineEarnings, setOfflineEarnings] = useState<number | null>(null);
   const stateRef = useRef(state);
   stateRef.current = state;
 
   const upsertSave = useUpsertPlayerSave();
   const submitScore = useSubmitScore();
 
+  const prestigeMultiplier = 1 + state.prestigeLevel * 0.5;
+
+  const milesPerSecond = calcMilesPerSecond(
+    state.ownedCars,
+    state.customVehicles,
+    state.ownedCustomVehicles,
+    prestigeMultiplier
+  );
+
+  const clickValue = state.ownedCars.reduce((acc, carId) => {
+    const car = CARS.find(c => c.id === carId);
+    return acc + (car ? car.clickMultiplier : 0);
+  }, 1) * prestigeMultiplier;
+
   // Load from local storage
   useEffect(() => {
     const saved = localStorage.getItem("revmaster_save");
     const todayKey = getDailyDateKey();
+    const now = Date.now();
 
     if (saved) {
       try {
@@ -101,41 +154,65 @@ export function GameProvider({ children }: { children: ReactNode }) {
         if (!parsed.playerId) parsed.playerId = uuidv4();
         if (!parsed.unlockedAchievements) parsed.unlockedAchievements = [];
         if (!parsed.raceWins) parsed.raceWins = 0;
+        if (!parsed.customVehicles) parsed.customVehicles = [];
+        if (!parsed.ownedCustomVehicles) parsed.ownedCustomVehicles = [];
+
+        // Offline earnings calculation
+        if (parsed.lastOnlineTime && parsed.lastOnlineTime > 0) {
+          const elapsedSec = (now - parsed.lastOnlineTime) / 1000;
+          if (elapsedSec > 30) {
+            const pm = 1 + (parsed.prestigeLevel || 0) * 0.5;
+            const mps = calcMilesPerSecond(
+              parsed.ownedCars || [],
+              parsed.customVehicles || [],
+              parsed.ownedCustomVehicles || [],
+              pm
+            );
+            const earned = Math.floor(mps * elapsedSec * 0.70);
+            if (earned > 0) {
+              parsed.miles = (parsed.miles || 0) + earned;
+              parsed.totalMilesEver = (parsed.totalMilesEver || 0) + earned;
+              setOfflineEarnings(earned);
+            }
+          }
+        }
+
         // Refresh daily challenges if it's a new day
         if (parsed.dailyChallengeDate !== todayKey) {
           parsed.dailyChallenges = freshDailyChallenges(todayKey);
           parsed.dailyChallengeDate = todayKey;
         }
+
+        parsed.lastOnlineTime = now;
         setState({ ...DEFAULT_STATE, ...parsed });
       } catch {
-        const s = { ...DEFAULT_STATE, playerId: uuidv4(), dailyChallenges: freshDailyChallenges(todayKey), dailyChallengeDate: todayKey };
+        const s: GameState = {
+          ...DEFAULT_STATE,
+          playerId: uuidv4(),
+          dailyChallenges: freshDailyChallenges(todayKey),
+          dailyChallengeDate: todayKey,
+          lastOnlineTime: now,
+        };
         setState(s);
       }
     } else {
-      const s = { ...DEFAULT_STATE, playerId: uuidv4(), dailyChallenges: freshDailyChallenges(todayKey), dailyChallengeDate: todayKey };
+      const s: GameState = {
+        ...DEFAULT_STATE,
+        playerId: uuidv4(),
+        dailyChallenges: freshDailyChallenges(todayKey),
+        dailyChallengeDate: todayKey,
+        lastOnlineTime: now,
+      };
       setState(s);
     }
     setReady(true);
   }, []);
 
-  // Sync to localStorage
+  // Sync to localStorage + update lastOnlineTime
   useEffect(() => {
     if (!ready) return;
-    localStorage.setItem("revmaster_save", JSON.stringify(state));
+    localStorage.setItem("revmaster_save", JSON.stringify({ ...state, lastOnlineTime: Date.now() }));
   }, [state, ready]);
-
-  // Derived values
-  const prestigeMultiplier = 1 + state.prestigeLevel * 0.5;
-
-  const milesPerSecond = state.ownedCars.reduce((acc, carId) => {
-    const car = CARS.find(c => c.id === carId);
-    return acc + (car ? car.milesPerSecond * prestigeMultiplier : 0);
-  }, 0);
-
-  const clickValue = state.ownedCars.reduce((acc, carId) => {
-    const car = CARS.find(c => c.id === carId);
-    return acc + (car ? car.clickMultiplier : 0);
-  }, 1) * prestigeMultiplier;
 
   // Challenge progress updater
   const updateChallengeProgress = useCallback((type: string, amount: number) => {
@@ -150,7 +227,6 @@ export function GameProvider({ children }: { children: ReactNode }) {
         return { ...c, progress: newProgress, completed: justCompleted || c.completed };
       });
 
-      // Sum up newly completed rewards
       const rewardSum = updated.reduce((acc, c, i) => {
         const was = prev.dailyChallenges[i];
         return acc + (!was.completed && c.completed ? c.reward : 0);
@@ -169,9 +245,11 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const triggerAchievementCheck = useCallback(
     (flags?: Parameters<typeof checkAchievements>[2]): string[] => {
       const s = stateRef.current;
+      const pm = 1 + s.prestigeLevel * 0.5;
+      const mps = calcMilesPerSecond(s.ownedCars, s.customVehicles, s.ownedCustomVehicles, pm);
       const newOnes = checkAchievements(
         { ...s, unlockedAchievements: s.unlockedAchievements },
-        milesPerSecond,
+        mps,
         flags
       );
       if (newOnes.length > 0) {
@@ -321,10 +399,58 @@ export function GameProvider({ children }: { children: ReactNode }) {
         raceWins: prev.raceWins,
         dailyChallenges: prev.dailyChallenges,
         dailyChallengeDate: prev.dailyChallengeDate,
+        customVehicles: prev.customVehicles,
+        ownedCustomVehicles: prev.ownedCustomVehicles,
+        lastOnlineTime: Date.now(),
       }));
       triggerAchievementCheck();
     }
   };
+
+  const addCustomVehicle = (v: Omit<CustomVehicle, "id" | "createdAt">) => {
+    const newVehicle: CustomVehicle = {
+      ...v,
+      id: uuidv4(),
+      createdAt: Date.now(),
+    };
+    setState(prev => ({
+      ...prev,
+      customVehicles: [...(prev.customVehicles ?? []), newVehicle],
+    }));
+    if (toastFn) toastFn("🔧 Custom Vehicle Created!", `${v.name} added to your custom garage.`);
+  };
+
+  const deleteCustomVehicle = (id: string) => {
+    setState(prev => ({
+      ...prev,
+      customVehicles: prev.customVehicles.filter(v => v.id !== id),
+      ownedCustomVehicles: prev.ownedCustomVehicles.filter(vid => vid !== id),
+    }));
+  };
+
+  const buyCustomVehicle = (id: string) => {
+    const vehicle = state.customVehicles.find(v => v.id === id);
+    if (!vehicle) return;
+    const count = state.ownedCustomVehicles.filter(vid => vid === id).length;
+    const cost = Math.floor(vehicle.unlockCost * Math.pow(1.15, count));
+    if (vehicle.unlockCost === 0 || state.miles >= cost) {
+      if (vehicle.unlockCost > 0) {
+        playPurchaseSound();
+        setState(prev => ({
+          ...prev,
+          miles: prev.miles - cost,
+          ownedCustomVehicles: [...(prev.ownedCustomVehicles ?? []), id],
+        }));
+      } else {
+        setState(prev => ({
+          ...prev,
+          ownedCustomVehicles: [...(prev.ownedCustomVehicles ?? []), id],
+        }));
+      }
+    }
+  };
+
+  const dismissOfflineEarnings = () => setOfflineEarnings(null);
 
   const refreshSave = () => {};
 
@@ -333,7 +459,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
       state, milesPerSecond, clickValue, prestigeMultiplier,
       setPlayerName, clickMainCar, buyCar, selectCar, prestige,
       updateCustomization, addBonusMiles, triggerAchievementCheck,
-      updateChallengeProgress, ready, refreshSave,
+      updateChallengeProgress, addCustomVehicle, deleteCustomVehicle,
+      buyCustomVehicle, ready, refreshSave,
+      offlineEarnings, dismissOfflineEarnings,
     }}>
       {children}
     </GameContext.Provider>

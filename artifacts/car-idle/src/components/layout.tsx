@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useGameState } from "@/hooks/use-game-state";
 import { NamePrompt } from "@/components/name-prompt";
-import { Trophy, Home, Car, Store, Skull, Target, ArrowRightLeft, Flag, Medal, Flame } from "lucide-react";
+import { Trophy, Home, Car, Store, Skull, Gauge, ArrowRightLeft, Flag, Medal, Flame, Wrench } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -12,12 +12,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { href: "/", label: "Drive", icon: Home },
     { href: "/garage", label: "Garage", icon: Car },
     { href: "/dealership", label: "Shop", icon: Store },
-    { href: "/drift", label: "Drift", icon: Target },
+    { href: "/dyno", label: "Dyno", icon: Gauge },
     { href: "/race", label: "Race", icon: Flag },
     { href: "/leaderboard", label: "Ranks", icon: Trophy },
     { href: "/trades", label: "Market", icon: ArrowRightLeft },
     { href: "/achievements", label: "Awards", icon: Medal },
     { href: "/challenges", label: "Challenges", icon: Flame },
+    { href: "/custom-garage", label: "Custom", icon: Wrench },
     { href: "/prestige", label: "Rebirth", icon: Skull },
   ];
 
@@ -96,11 +97,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
           { href: "/", icon: Home },
           { href: "/garage", icon: Car },
           { href: "/dealership", icon: Store },
-          { href: "/drift", icon: Target },
+          { href: "/dyno", icon: Gauge },
           { href: "/race", icon: Flag },
           { href: "/leaderboard", icon: Trophy },
           { href: "/achievements", icon: Medal },
-          { href: "/challenges", icon: Flame },
+          { href: "/custom-garage", icon: Wrench },
           { href: "/prestige", icon: Skull },
         ].map(({ href, icon: Icon }) => {
           const active = location === href;

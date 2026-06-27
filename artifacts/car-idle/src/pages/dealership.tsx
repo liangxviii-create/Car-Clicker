@@ -7,20 +7,18 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const CATEGORY_COLORS: Record<string, string> = {
-  jdm:      "#0055cc",
-  muscle:   "#aa5500",
-  ferrari:  "#cc0000",
-  exotic:   "#7700cc",
-  hypercar: "#cc8800",
-  luxury:   "#1a7a4a",
-  ev:       "#0099cc",
-  retro:    "#8b6914",
-  absolute: "#cc0044",
+  jdm:              "#0055cc",
+  super:            "#cc2200",
+  hypercar:         "#cc8800",
+  ev:               "#0099cc",
+  retro:            "#8b6914",
+  absolute:         "#cc0044",
   aircraft:         "#2277bb",
   extreme_aircraft: "#556b2f",
-  missile:     "#cc4400",
-  spacecraft:    "#0b3d91",
-  space_objects: "#4b0082",
+  missile:          "#cc4400",
+  spacecraft:       "#0b3d91",
+  space_objects:    "#4b0082",
+  custom:           "#7700cc",
 };
 
 function CarCard({ car }: { car: Car }) {
@@ -67,18 +65,51 @@ function CarCard({ car }: { car: Car }) {
         </div>
       )}
 
-      {/* Car visual */}
+      {/* Vehicle visual */}
       <div className="w-full h-16 flex items-center justify-center bg-background/50 rounded-lg overflow-hidden">
-        <svg viewBox="0 0 120 60" className="w-24 drop-shadow-lg" fill="none">
-          <path d="M10 38 L15 22 Q30 14 60 12 Q90 14 105 22 L110 38 Z" fill={carColor} />
-          <path d="M30 22 Q45 8 75 8 Q90 10 95 22 Z" fill={carColor} opacity="0.75" />
-          <path d="M33 22 Q45 12 65 12 Q80 12 88 22 Z" fill="#88ccff" opacity="0.5" />
-          <circle cx="30" cy="40" r="10" fill="#111" stroke="#444" strokeWidth="2" />
-          <circle cx="30" cy="40" r="5"  fill="#222" stroke="#777" strokeWidth="1" />
-          <circle cx="90" cy="40" r="10" fill="#111" stroke="#444" strokeWidth="2" />
-          <circle cx="90" cy="40" r="5"  fill="#222" stroke="#777" strokeWidth="1" />
-          <ellipse cx="108" cy="30" rx="4" ry="3" fill="#ffaa00" opacity="0.9" />
-        </svg>
+        {car.imagePath ? (
+          <img src={car.imagePath} alt={car.name} className="h-full object-contain" />
+        ) : (
+          <svg viewBox="0 0 120 60" className="w-24 drop-shadow-lg" fill="none">
+            {car.category === "aircraft" || car.category === "extreme_aircraft" ? (
+              <>
+                <path d="M60 20 L100 35 L90 38 L60 30 L30 38 L20 35 Z" fill={carColor} />
+                <path d="M60 20 L70 15 L80 20 L60 28 Z" fill={carColor} opacity="0.7" />
+                <path d="M60 20 L50 40 L60 38 L70 40 Z" fill={carColor} opacity="0.8" />
+              </>
+            ) : car.category === "missile" ? (
+              <>
+                <path d="M90 28 L30 26 L25 30 L30 34 L90 32 Z" fill={carColor} />
+                <path d="M90 28 L100 30 L90 32 Z" fill="#ff8800" />
+                <path d="M25 26 L18 24 L22 30 L18 36 L25 34 Z" fill={carColor} opacity="0.7" />
+              </>
+            ) : car.category === "spacecraft" ? (
+              <>
+                <ellipse cx="60" cy="30" rx="15" ry="20" fill={carColor} />
+                <path d="M45 30 L25 20 L30 30 L25 40 Z" fill={carColor} opacity="0.6" />
+                <path d="M75 30 L95 20 L90 30 L95 40 Z" fill={carColor} opacity="0.6" />
+                <ellipse cx="60" cy="22" rx="8" ry="6" fill="#88ccff" opacity="0.5" />
+              </>
+            ) : car.category === "space_objects" ? (
+              <>
+                <circle cx="60" cy="30" r="18" fill={carColor} opacity="0.7" />
+                <circle cx="55" cy="26" r="5" fill="#ffffff" opacity="0.2" />
+                <ellipse cx="60" cy="30" rx="28" ry="8" fill="none" stroke={carColor} strokeWidth="2" opacity="0.5" />
+              </>
+            ) : (
+              <>
+                <path d="M10 38 L15 22 Q30 14 60 12 Q90 14 105 22 L110 38 Z" fill={carColor} />
+                <path d="M30 22 Q45 8 75 8 Q90 10 95 22 Z" fill={carColor} opacity="0.75" />
+                <path d="M33 22 Q45 12 65 12 Q80 12 88 22 Z" fill="#88ccff" opacity="0.5" />
+                <circle cx="30" cy="40" r="10" fill="#111" stroke="#444" strokeWidth="2" />
+                <circle cx="30" cy="40" r="5"  fill="#222" stroke="#777" strokeWidth="1" />
+                <circle cx="90" cy="40" r="10" fill="#111" stroke="#444" strokeWidth="2" />
+                <circle cx="90" cy="40" r="5"  fill="#222" stroke="#777" strokeWidth="1" />
+                <ellipse cx="108" cy="30" rx="4" ry="3" fill="#ffaa00" opacity="0.9" />
+              </>
+            )}
+          </svg>
+        )}
       </div>
 
       {/* Info */}
@@ -98,7 +129,7 @@ function CarCard({ car }: { car: Car }) {
         </div>
         <div className="bg-background/60 rounded p-1">
           <div className="text-muted-foreground uppercase tracking-wider text-[8px]">Click</div>
-          <div className="font-bold text-primary">x{car.clickMultiplier}</div>
+          <div className="font-bold text-primary">x{car.clickMultiplier.toExponential ? car.clickMultiplier > 1e6 ? car.clickMultiplier.toExponential(1) : car.clickMultiplier : car.clickMultiplier}</div>
         </div>
       </div>
 
@@ -121,33 +152,33 @@ function CarCard({ car }: { car: Car }) {
 }
 
 const CATEGORIES = [
-  { id: "jdm",      label: "JDM" },
-  { id: "muscle",   label: "Muscle" },
-  { id: "ferrari",  label: "Ferrari" },
-  { id: "exotic",   label: "Exotic" },
-  { id: "luxury",   label: "Luxury" },
-  { id: "ev",       label: "⚡ EV" },
-  { id: "retro",    label: "Retro" },
-  { id: "hypercar", label: "🔥 Hyper" },
-  { id: "absolute", label: "💀 Absolute" },
+  { id: "jdm",              label: "JDM" },
+  { id: "retro",            label: "Retro" },
+  { id: "ev",               label: "⚡ EV" },
+  { id: "super",            label: "🏎️ Super" },
+  { id: "hypercar",         label: "🔥 Hyper" },
+  { id: "absolute",         label: "💀 Absolute" },
   { id: "aircraft",         label: "✈️ Aircraft" },
   { id: "extreme_aircraft", label: "🛡️ Extreme" },
-  { id: "missile",     label: "🚀 Missiles" },
-  { id: "spacecraft",    label: "🛸 Spacecraft" },
-  { id: "space_objects", label: "🌌 Space Objects" },
+  { id: "missile",          label: "🚀 Missiles" },
+  { id: "spacecraft",       label: "🛸 Spacecraft" },
+  { id: "space_objects",    label: "🌌 Space Objects" },
+  { id: "custom",           label: "🔧 Custom" },
 ];
 
 const CATEGORY_BANNERS: Record<string, { text: string; color: string }> = {
-  hypercar: { text: "🔥 Hypercars require Prestige to unlock — the fastest machines ever built.", color: "border-amber-500/30 bg-amber-500/5 text-amber-400" },
-  luxury:   { text: "🏆 Luxury SUVs and ultra-premium grand tourers. Opulence earns miles too.", color: "border-emerald-500/30 bg-emerald-500/5 text-emerald-400" },
-  ev:       { text: "⚡ Pure electric speed — zero emissions, maximum torque.", color: "border-cyan-500/30 bg-cyan-500/5 text-cyan-400" },
-  retro:    { text: "🕰️ Classic icons from the golden age of automotive design.", color: "border-yellow-600/30 bg-yellow-600/5 text-yellow-500" },
-  absolute: { text: "💀 The Absolute tier — race cars, jet-powered trucks, and machines that defy physics. Requires deep Prestige.", color: "border-red-500/30 bg-red-500/5 text-red-400" },
-  aircraft:         { text: "✈️ Aircraft — commercial jetliners, WWII fighters, and strategic bombers. Prestige-locked and astronomically powerful.", color: "border-sky-500/30 bg-sky-500/5 text-sky-400" },
-  extreme_aircraft: { text: "🛡️ Extreme Aircraft — Cold War interceptors, stealth fighters, and hypersonic experimentals. The most destructive machines ever built.", color: "border-lime-700/40 bg-lime-900/10 text-lime-500" },
-  missile:    { text: "🚀 Missiles — from shoulder-fired anti-tank rounds to nuclear ICBMs. The K-4 tops out at 8 Trillion miles and 40B/s. You'll need deep Prestige.", color: "border-orange-600/40 bg-orange-900/10 text-orange-400" },
-  spacecraft:    { text: "🛸 Spacecraft — historic missions from Vostok 1 to Artemis II. Artemis II tops the entire game at 100 Quadrillion miles and 500B/s. Prestige 3–7 required.", color: "border-blue-800/40 bg-blue-950/20 text-blue-300" },
-  space_objects: { text: "🌌 Space Objects — from Mercury to the Andromeda Galaxy. The ultimate tier: Andromeda tops out at 10 Sextillion miles and 50Qt/s. Requires Prestige 7–9.", color: "border-purple-800/40 bg-purple-950/20 text-purple-300" },
+  jdm:      { text: "🏁 JDM — Japanese (and street) performance legends. From humble beginnings to the legendary R34.", color: "border-blue-500/30 bg-blue-500/5 text-blue-400" },
+  retro:    { text: "🕰️ Retro — Classic icons from the golden age of automotive design, from the Model T to the Countach.", color: "border-yellow-600/30 bg-yellow-600/5 text-yellow-500" },
+  ev:       { text: "⚡ EV — Pure electric speed. Zero emissions, maximum torque from Tesla's finest.", color: "border-cyan-500/30 bg-cyan-500/5 text-cyan-400" },
+  super:    { text: "🏎️ Supercars — Ferrari, Lamborghini, McLaren, and more. The pinnacle of road-legal performance.", color: "border-red-500/30 bg-red-500/5 text-red-400" },
+  hypercar: { text: "🔥 Hypercars — Ultra-rare machines from Bugatti, Koenigsegg, Pagani. Prestige required.", color: "border-amber-500/30 bg-amber-500/5 text-amber-400" },
+  absolute: { text: "💀 Absolute — Jet trucks, F1 cars, and machines that defy physics. Deep Prestige required.", color: "border-rose-500/30 bg-rose-500/5 text-rose-400" },
+  aircraft: { text: "✈️ Aircraft — From Cessna 172 to the Airbus A380 and Concorde. Prestige-locked and astronomically powerful.", color: "border-sky-500/30 bg-sky-500/5 text-sky-400" },
+  extreme_aircraft: { text: "🛡️ Extreme Aircraft — WW2 aces, Cold War interceptors, stealth fighters, and hypersonic experimentals.", color: "border-lime-700/40 bg-lime-900/10 text-lime-500" },
+  missile:  { text: "🚀 Missiles — From FGM-148 Javelin to nuclear ICBMs. Deep Prestige required.", color: "border-orange-600/40 bg-orange-900/10 text-orange-400" },
+  spacecraft: { text: "🛸 Spacecraft — Sputnik to Starship, Mercury to Artemis. Prestige 3–7 required.", color: "border-blue-800/40 bg-blue-950/20 text-blue-300" },
+  space_objects: { text: "🌌 Space Objects — Exoplanets, stars, galaxies, and The Whole Universe. Prestige 7–9 required.", color: "border-purple-800/40 bg-purple-950/20 text-purple-300" },
+  custom:   { text: "🔧 Custom Builds — Legendary one-off creations with absurd power. Prestige 8–9 required. Build your own in the Custom Garage!", color: "border-violet-500/30 bg-violet-500/5 text-violet-400" },
 };
 
 export default function Dealership() {
