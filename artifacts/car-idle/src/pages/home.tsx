@@ -26,6 +26,12 @@ export default function Home() {
     ? CARS.find(c => c.id === state.selectedCar)
     : null;
 
+  // Most recently bought car (last entry in ownedCars, or fallback to selectedCar)
+  const lastBoughtId = state.ownedCars.length > 0
+    ? state.ownedCars[state.ownedCars.length - 1]
+    : state.selectedCar;
+  const displayCar = lastBoughtId ? CARS.find(c => c.id === lastBoughtId) ?? activeCar : activeCar;
+
   const handleCarClick = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     playClickSound();
     clickMainCar();
@@ -90,25 +96,28 @@ export default function Home() {
             <div
               className={`w-48 h-32 lg:w-64 lg:h-44 flex items-center justify-center rounded-xl border-2 ${clicking ? "border-primary shadow-[0_0_40px_hsl(0_90%_55%/0.8)]" : "border-primary/30 shadow-[0_0_20px_hsl(0_90%_55%/0.3)]"} bg-card/60 backdrop-blur-sm transition-all duration-150 relative overflow-hidden`}
             >
-              {/* Car SVG */}
-              <svg viewBox="0 0 120 60" className="w-36 lg:w-48 drop-shadow-2xl" fill="none">
-                {/* Body */}
-                <path d="M10 38 L15 22 Q30 14 60 12 Q90 14 105 22 L110 38 Z" fill={state.garageCustomizations[state.selectedCar || '']?.color || "#cc2200"} />
-                {/* Roof */}
-                <path d="M30 22 Q45 8 75 8 Q90 10 95 22 Z" fill={state.garageCustomizations[state.selectedCar || '']?.color || "#cc2200"} opacity="0.8" />
-                {/* Windows */}
-                <path d="M33 22 Q45 12 65 12 Q80 12 88 22 Z" fill="#88ccff" opacity="0.6" />
-                {/* Wheels */}
-                <circle cx="30" cy="40" r="10" fill="#111" stroke="#555" strokeWidth="2" />
-                <circle cx="30" cy="40" r="5" fill="#333" stroke="#888" strokeWidth="1" />
-                <circle cx="90" cy="40" r="10" fill="#111" stroke="#555" strokeWidth="2" />
-                <circle cx="90" cy="40" r="5" fill="#333" stroke="#888" strokeWidth="1" />
-                {/* Headlights */}
-                <ellipse cx="108" cy="30" rx="4" ry="3" fill="#ffaa00" opacity="0.9" />
-                <ellipse cx="12" cy="30" rx="4" ry="3" fill="#ff4400" opacity="0.7" />
-                {/* Ground line */}
-                <line x1="5" y1="50" x2="115" y2="50" stroke="#333" strokeWidth="1" />
-              </svg>
+              {/* Car thumbnail or SVG fallback */}
+              {displayCar?.imagePath ? (
+                <img
+                  src={displayCar.imagePath}
+                  alt={displayCar.name}
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                />
+              ) : (
+                <svg viewBox="0 0 120 60" className="w-36 lg:w-48 drop-shadow-2xl" fill="none">
+                  <path d="M10 38 L15 22 Q30 14 60 12 Q90 14 105 22 L110 38 Z" fill={state.garageCustomizations[state.selectedCar || '']?.color || "#cc2200"} />
+                  <path d="M30 22 Q45 8 75 8 Q90 10 95 22 Z" fill={state.garageCustomizations[state.selectedCar || '']?.color || "#cc2200"} opacity="0.8" />
+                  <path d="M33 22 Q45 12 65 12 Q80 12 88 22 Z" fill="#88ccff" opacity="0.6" />
+                  <circle cx="30" cy="40" r="10" fill="#111" stroke="#555" strokeWidth="2" />
+                  <circle cx="30" cy="40" r="5" fill="#333" stroke="#888" strokeWidth="1" />
+                  <circle cx="90" cy="40" r="10" fill="#111" stroke="#555" strokeWidth="2" />
+                  <circle cx="90" cy="40" r="5" fill="#333" stroke="#888" strokeWidth="1" />
+                  <ellipse cx="108" cy="30" rx="4" ry="3" fill="#ffaa00" opacity="0.9" />
+                  <ellipse cx="12" cy="30" rx="4" ry="3" fill="#ff4400" opacity="0.7" />
+                  <line x1="5" y1="50" x2="115" y2="50" stroke="#333" strokeWidth="1" />
+                </svg>
+              )}
               {/* Click ripple */}
               {clicking && (
                 <div className="absolute inset-0 rounded-xl border border-primary animate-ping opacity-50" />
@@ -128,10 +137,10 @@ export default function Home() {
           ))}
         </div>
 
-        {activeCar && (
+        {displayCar && (
           <div className="text-center z-10">
-            <div className="text-lg font-black text-white">{activeCar.name}</div>
-            <div className="text-sm text-muted-foreground">{activeCar.brand} · <span className={`rarity-${activeCar.rarity}`}>{activeCar.rarity}</span></div>
+            <div className="text-lg font-black text-white">{displayCar.name}</div>
+            <div className="text-sm text-muted-foreground">{displayCar.brand} · <span className={`rarity-${displayCar.rarity}`}>{displayCar.rarity}</span></div>
           </div>
         )}
 
