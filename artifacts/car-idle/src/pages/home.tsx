@@ -201,12 +201,16 @@ export default function Home() {
                 }
               `}
             >
-              <div className="w-8 h-8 rounded flex items-center justify-center bg-background/80 shrink-0">
-                <svg viewBox="0 0 24 12" className="w-6" fill="none">
-                  <path d="M2 8 L4 3 Q8 1 12 1 Q16 1 20 3 L22 8 Z" fill={canAfford ? "hsl(0 90% 55%)" : "#444"} />
-                  <circle cx="6" cy="9" r="2.5" fill="#222" stroke="#666" strokeWidth="0.5" />
-                  <circle cx="18" cy="9" r="2.5" fill="#222" stroke="#666" strokeWidth="0.5" />
-                </svg>
+              <div className="w-8 h-8 rounded flex items-center justify-center bg-background/80 shrink-0 overflow-hidden">
+                {car.imagePath ? (
+                  <img src={car.imagePath} alt={car.name} className="w-full h-full object-cover" />
+                ) : (
+                  <svg viewBox="0 0 24 12" className="w-6" fill="none">
+                    <path d="M2 8 L4 3 Q8 1 12 1 Q16 1 20 3 L22 8 Z" fill={canAfford ? "hsl(0 90% 55%)" : "#444"} />
+                    <circle cx="6" cy="9" r="2.5" fill="#222" stroke="#666" strokeWidth="0.5" />
+                    <circle cx="18" cy="9" r="2.5" fill="#222" stroke="#666" strokeWidth="0.5" />
+                  </svg>
+                )}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-bold text-foreground truncate">{car.name}</div>

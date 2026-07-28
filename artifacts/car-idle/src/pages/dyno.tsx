@@ -8,16 +8,23 @@ const DYNO_DURATION = 5000;
 
 type DynoOutcome = "full" | "mid" | "blown";
 
+interface DynoCar {
+  id: string;
+  name: string;
+  brand: string;
+  milesPerSecond: number;
+  imagePath?: string;
+  category?: string;
+  isCustom?: boolean;
+}
+
 function rollOutcome(): { outcome: DynoOutcome; targetProgress: number } {
   const roll = Math.random();
   if (roll < 0.28) {
-    // Engine blow — goes past 90% then catastrophically drops
     return { outcome: "blown", targetProgress: 0.92 + Math.random() * 0.08 };
   } else if (roll < 0.55) {
-    // Mid-rev stall — needle stalls between 45–70%
     return { outcome: "mid", targetProgress: 0.45 + Math.random() * 0.25 };
   } else {
-    // Full pull success
     return { outcome: "full", targetProgress: 1.0 };
   }
 }
@@ -39,10 +46,37 @@ export default function Dyno() {
   const outcomeRef = useRef<{ outcome: DynoOutcome; targetProgress: number } | null>(null);
   const blownRef = useRef(false);
 
+  // Build unified list: regular owned cars + owned custom vehicles
   const ownedUniqueIds = [...new Set(state.ownedCars)];
-  const ownedCars = ownedUniqueIds.map(id => CARS.find(c => c.id === id)).filter(Boolean) as typeof CARS;
+  const regularCars: DynoCar[] = ownedUniqueIds
+    .map(id => CARS.find(c => c.id === id))
+    .filter(Boolean)
+    .map(c => ({
+      id: c!.id,
+      name: c!.name,
+      brand: c!.brand,
+      milesPerSecond: c!.milesPerSecond,
+      imagePath: c!.imagePath,
+      category: c!.category,
+    }));
 
-  const selectedCar = selectedCarId ? CARS.find(c => c.id === selectedCarId) ?? null : null;
+  const ownedCustomIds = [...new Set(state.ownedCustomVehicles ?? [])];
+  const customCars: DynoCar[] = ownedCustomIds
+    .map(id => (state.customVehicles ?? []).find(v => v.id === id))
+    .filter(Boolean)
+    .map(v => ({
+      id: v!.id,
+      name: v!.name,
+      brand: v!.brand,
+      milesPerSecond: v!.horsepower * 10,
+      imagePath: v!.imagePath,
+      category: "custom",
+      isCustom: true,
+    }));
+
+  const allDynoCars: DynoCar[] = [...regularCars, ...customCars];
+
+  const selectedCar = selectedCarId ? allDynoCars.find(c => c.id === selectedCarId) ?? null : null;
 
   function calcFullReward(mps: number): number {
     return Math.floor(mps * 30 * 10);
@@ -70,23 +104,19 @@ export default function Dyno() {
       let p: number;
 
       if (oc === "full") {
-        // Smooth ramp to 100%, slight jitter in the red zone
         p = Math.min(elapsed / DYNO_DURATION, 1);
         if (p > 0.75) {
           p = Math.min(p + (Math.random() - 0.5) * 0.015, 1);
         }
       } else if (oc === "mid") {
-        // Builds up then suddenly stalls
         const rampTime = DYNO_DURATION * targetProgress;
         if (elapsed < rampTime) {
           p = elapsed / rampTime * targetProgress;
         } else {
-          // Stalled — slight drop and hold
           const dropElapsed = elapsed - rampTime;
           p = targetProgress - Math.min(dropElapsed / 800, 1) * 0.06;
         }
       } else {
-        // Blown — climbs fast to near redline, then rapid collapse
         const rampTime = DYNO_DURATION * 0.7;
         if (elapsed < rampTime) {
           p = elapsed / rampTime * targetProgress;
@@ -123,14 +153,12 @@ export default function Dyno() {
           addBonusMiles(r);
           setStatusMsg("⚠️ Engine stalled mid-pull. Partial reward only.");
         } else {
-          // Engine blown — lose 5% of current miles
           const loss = Math.floor(state.miles * 0.05);
           setPenalty(loss);
           addBonusMiles(-loss);
           setStatusMsg("💥 ENGINE BLOWN! Repair costs deducted from your miles!");
         }
 
-        // 45-second cooldown
         setCooldown(45);
         if (cooldownRef.current) clearInterval(cooldownRef.current);
         cooldownRef.current = setInterval(() => {
@@ -151,7 +179,6 @@ export default function Dyno() {
     };
   }, []);
 
-  // Gauge color: green → yellow → red → when blown flashes red
   function gaugeColor(p: number): string {
     if (outcome === "blown") return "#ff0000";
     if (p > 0.85) return "#ff2222";
@@ -195,11 +222,11 @@ export default function Dyno() {
         {/* Car Selection */}
         <div className="bg-card border border-border/50 rounded-2xl p-4 flex flex-col gap-3">
           <h2 className="font-black uppercase tracking-wider text-white text-sm">Select Vehicle</h2>
-          {ownedCars.length === 0 ? (
+          {allDynoCars.length === 0 ? (
             <p className="text-muted-foreground text-sm">Buy vehicles from the Dealership first.</p>
           ) : (
             <div className="overflow-y-auto max-h-[400px] flex flex-col gap-1.5">
-              {ownedCars.map(car => (
+              {allDynoCars.map(car => (
                 <button
                   key={car.id}
                   onClick={() => { setSelectedCarId(car.id); setOutcome(null); setReward(null); setPenalty(null); setStatusMsg(""); }}
@@ -214,7 +241,8 @@ export default function Dyno() {
                     <img src={car.imagePath} alt={car.name} className="w-10 h-7 object-cover rounded" />
                   ) : (
                     <div className="text-xl w-10 text-center">
-                      {car.category === "aircraft" || car.category === "extreme_aircraft" ? "✈️"
+                      {car.isCustom ? "🔧"
+                        : car.category === "aircraft" || car.category === "extreme_aircraft" ? "✈️"
                         : car.category === "missile" ? "🚀"
                         : car.category === "spacecraft" ? "🛸"
                         : car.category === "space_objects" ? "🌌"
@@ -223,7 +251,10 @@ export default function Dyno() {
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="font-bold text-xs leading-tight truncate">{car.name}</div>
-                    <div className="text-[10px] text-muted-foreground">{car.brand}</div>
+                    <div className="text-[10px] text-muted-foreground flex items-center gap-1">
+                      {car.brand}
+                      {car.isCustom && <span className="text-purple-400 font-bold">[Custom]</span>}
+                    </div>
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-[10px] text-accent font-bold">{formatNumber(car.milesPerSecond)}/s</div>
@@ -242,7 +273,6 @@ export default function Dyno() {
           {/* Gauge */}
           <div className="relative w-56 h-40">
             <svg viewBox="0 0 200 130" className="w-full h-full">
-              {/* Danger zone arc (red background) */}
               <path
                 d="M 20 110 A 80 80 0 0 1 180 110"
                 fill="none"
@@ -250,7 +280,6 @@ export default function Dyno() {
                 strokeWidth="14"
                 strokeLinecap="round"
               />
-              {/* Danger zone highlight (85–100%) */}
               <path
                 d="M 20 110 A 80 80 0 0 1 180 110"
                 fill="none"
@@ -260,7 +289,6 @@ export default function Dyno() {
                 strokeDasharray={`${0.85 * 251.3} 251.3`}
                 strokeDashoffset={`${-0.85 * 251.3}`}
               />
-              {/* Progress arc */}
               {progress > 0 && (
                 <path
                   d="M 20 110 A 80 80 0 0 1 180 110"
@@ -275,13 +303,11 @@ export default function Dyno() {
                   }}
                 />
               )}
-              {/* Needle */}
               <g transform={`rotate(${gaugeAngle}, 100, 110)`}
                  style={{ filter: outcome === "blown" ? "drop-shadow(0 0 4px red)" : undefined }}>
                 <line x1="100" y1="110" x2="100" y2="38" stroke={outcome === "blown" ? "#ff0000" : "white"} strokeWidth="3" strokeLinecap="round" />
                 <circle cx="100" cy="110" r="6" fill="#222" stroke={outcome === "blown" ? "#ff0000" : "white"} strokeWidth="2" />
               </g>
-              {/* Labels */}
               <text x="18" y="127" fill="#666" fontSize="9" textAnchor="middle">0</text>
               <text x="100" y="22" fill="#666" fontSize="9" textAnchor="middle">MID</text>
               <text x="170" y="90" fill="#ff4444" fontSize="9" textAnchor="middle">🔥</text>
@@ -289,7 +315,6 @@ export default function Dyno() {
             </svg>
           </div>
 
-          {/* RPM-style live readout */}
           {running && (
             <div className="font-mono text-2xl font-black tracking-widest"
                  style={{ color: gaugeColor(progress) }}>
@@ -297,9 +322,11 @@ export default function Dyno() {
             </div>
           )}
 
-          {/* Selected car info */}
           {selectedCar && !running && outcome === null && (
             <div className="text-center">
+              {selectedCar.imagePath && (
+                <img src={selectedCar.imagePath} alt={selectedCar.name} className="h-16 object-contain mx-auto mb-2 rounded-lg" />
+              )}
               <div className="text-white font-black text-base">{selectedCar.name}</div>
               <div className="text-muted-foreground text-xs">{selectedCar.brand}</div>
               <div className="mt-1 text-accent font-bold text-sm">
@@ -311,7 +338,6 @@ export default function Dyno() {
             </div>
           )}
 
-          {/* Outcome display */}
           {outcome === "full" && reward !== null && (
             <div className="bg-emerald-500/10 border border-emerald-500/40 rounded-xl px-6 py-3 text-center w-full">
               <div className="text-emerald-400 font-black text-xl">+{formatNumber(reward)} miles!</div>
@@ -331,7 +357,6 @@ export default function Dyno() {
             </div>
           )}
 
-          {/* Cooldown / Button */}
           {cooldown > 0 ? (
             <div className="w-full text-center">
               <div className="text-muted-foreground text-sm font-bold">Cooling down: {cooldown}s</div>
@@ -369,12 +394,11 @@ export default function Dyno() {
         </div>
       </div>
 
-      {/* Info */}
       <div className="bg-card border border-border/50 rounded-xl p-4 text-xs text-muted-foreground">
         <p className="font-bold text-white mb-1">How Dyno Mode works</p>
         <p>Your vehicle is strapped to the dynamometer and runs a full pull — but nothing is guaranteed. 
         The engine might stall mid-rev for a partial reward, or blow entirely, costing you 5% of your miles. 
-        Only 45% of pulls complete successfully. 45-second cooldown between runs. The most powerful vehicles earn the most — but also lose the most if they blow.</p>
+        Only 45% of pulls complete successfully. 45-second cooldown between runs. The most powerful vehicles earn the most — but also lose the most if they blow. Custom vehicles are fully supported!</p>
       </div>
     </div>
   );

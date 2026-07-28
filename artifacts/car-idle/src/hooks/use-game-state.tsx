@@ -400,7 +400,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         dailyChallenges: prev.dailyChallenges,
         dailyChallengeDate: prev.dailyChallengeDate,
         customVehicles: prev.customVehicles,
-        ownedCustomVehicles: prev.ownedCustomVehicles,
+        ownedCustomVehicles: [],
         lastOnlineTime: Date.now(),
       }));
       triggerAchievementCheck();

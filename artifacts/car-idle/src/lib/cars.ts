@@ -19,7 +19,7 @@ export const CARS: Car[] = [
   // ═══════════════════════════════════════════════════════
   // JDM
   // ═══════════════════════════════════════════════════════
-  { id:"jdm_corolla",   name:"Corolla AE86",       brand:"Toyota",  category:"jdm", rarity:"common",    baseCost:200,     milesPerSecond:1.8,    clickMultiplier:1.08 },
+  { id:"jdm_corolla",   name:"Corolla AE86",       brand:"Toyota",  category:"jdm", rarity:"common",    baseCost:200,     milesPerSecond:1.8,    clickMultiplier:1.08, imagePath:"/vehicles/Toyota-Corolla-AE86.jpg" },
   { id:"jdm_accord",    name:"Accord Type S",       brand:"Honda",   category:"jdm", rarity:"common",    baseCost:350,     milesPerSecond:3,      clickMultiplier:1.1,  imagePath:"/vehicles/Accord-Type-S.jpg" },
   { id:"jdm_civic",     name:"Civic Type R",        brand:"Honda",   category:"jdm", rarity:"common",    baseCost:1200,    milesPerSecond:8,      clickMultiplier:1.15, imagePath:"/vehicles/Honda-Civic-Type_R.jpg" },
   { id:"jdm_silvia",    name:"Silvia S15",           brand:"Nissan",  category:"jdm", rarity:"common",    baseCost:2000,    milesPerSecond:13,     clickMultiplier:1.2,  imagePath:"/vehicles/Silvia-S15.avif" },
@@ -37,7 +37,7 @@ export const CARS: Car[] = [
   // ═══════════════════════════════════════════════════════
   // RETRO
   // ═══════════════════════════════════════════════════════
-  { id:"retro_model_t",       name:"Model T",              brand:"Ford",         category:"retro", rarity:"common",    baseCost:50,      milesPerSecond:0.3,    clickMultiplier:1.02 },
+  { id:"retro_model_t",       name:"Model T",              brand:"Ford",         category:"retro", rarity:"common",    baseCost:50,      milesPerSecond:0.3,    clickMultiplier:1.02, imagePath:"/vehicles/Ford-Model-T.jpg" },
   { id:"retro_islero",        name:"Islero",               brand:"Lamborghini",  category:"retro", rarity:"common",    baseCost:1000,    milesPerSecond:7,      clickMultiplier:1.2,  imagePath:"/vehicles/Lamborghini_Islero,_Techno_Classica_2018,_Essen_(IMG_9696).jpg" },
   { id:"retro_jarama",        name:"Jarama GT",            brand:"Lamborghini",  category:"retro", rarity:"common",    baseCost:2000,    milesPerSecond:13,     clickMultiplier:1.3,  imagePath:"/vehicles/jarama-gt.avif" },
   { id:"retro_urraco",        name:"Urraco P300",          brand:"Lamborghini",  category:"retro", rarity:"common",    baseCost:3500,    milesPerSecond:22,     clickMultiplier:1.4,  imagePath:"/vehicles/urraco-p300.jpg" },
@@ -51,13 +51,6 @@ export const CARS: Car[] = [
   { id:"retro_miura_sv",      name:"Miura SV",             brand:"Lamborghini",  category:"retro", rarity:"legendary", baseCost:1200000, milesPerSecond:6000,   clickMultiplier:5.5,  imagePath:"/vehicles/Miura-SV.webp" },
   { id:"retro_countach_5175", name:"Countach 5175cc QV",   brand:"Lamborghini",  category:"retro", rarity:"legendary", baseCost:2500000, milesPerSecond:12000,  clickMultiplier:7.0,  imagePath:"/vehicles/Countach-5175cc-Quattrovalvole.jpg" },
 
-  // ═══════════════════════════════════════════════════════
-  // EV
-  // ═══════════════════════════════════════════════════════
-  { id:"ev_model_y",  name:"Model Y Performance", brand:"Tesla", category:"ev", rarity:"rare",      baseCost:7000,   milesPerSecond:50,  clickMultiplier:1.6 },
-  { id:"ev_model_3",  name:"Model 3 Performance", brand:"Tesla", category:"ev", rarity:"rare",      baseCost:12000,  milesPerSecond:85,  clickMultiplier:1.8 },
-  { id:"ev_model_x",  name:"Model X Plaid",       brand:"Tesla", category:"ev", rarity:"legendary", baseCost:80000,  milesPerSecond:450, clickMultiplier:2.8 },
-  { id:"ev_model_s",  name:"Model S Plaid",       brand:"Tesla", category:"ev", rarity:"legendary", baseCost:180000, milesPerSecond:1000,clickMultiplier:3.5 },
 
   // ═══════════════════════════════════════════════════════
   // SUPER
@@ -65,7 +58,7 @@ export const CARS: Car[] = [
   { id:"sup_gt40",         name:"GT40",                           brand:"Ford",        category:"super", rarity:"rare",      baseCost:500000,   milesPerSecond:3000,   clickMultiplier:5.5,  imagePath:"/vehicles/gt40.jpg" },
   { id:"sup_gt",           name:"GT",                             brand:"Ford",        category:"super", rarity:"rare",      baseCost:700000,   milesPerSecond:4000,   clickMultiplier:5.8,  imagePath:"/vehicles/ford_gt_3rd_gen.webp" },
   { id:"sup_mustang_gtd",  name:"Mustang GTD",                    brand:"Ford",        category:"super", rarity:"rare",      baseCost:900000,   milesPerSecond:5000,   clickMultiplier:6.0,  imagePath:"/vehicles/mustang-gtd.avif" },
-  { id:"sup_corvette_c8",  name:"Corvette C8",                    brand:"Chevrolet",   category:"super", rarity:"rare",      baseCost:1000000,  milesPerSecond:5500,   clickMultiplier:6.1 },
+  { id:"sup_corvette_c8",  name:"Corvette C8",                    brand:"Chevrolet",   category:"super", rarity:"rare",      baseCost:1000000,  milesPerSecond:5500,   clickMultiplier:6.1,  imagePath:"/vehicles/Corvette-C8.jpg" },
   { id:"sup_viper",        name:"Viper",                          brand:"Dodge",       category:"super", rarity:"rare",      baseCost:1200000,  milesPerSecond:6500,   clickMultiplier:6.3,  imagePath:"/vehicles/dodge_viper_gts_1996.jpg" },
   { id:"sup_demon170",     name:"Challenger Demon 170",           brand:"Dodge",       category:"super", rarity:"rare",      baseCost:1500000,  milesPerSecond:8000,   clickMultiplier:6.6,  imagePath:"/vehicles/dodge_demon_170.jpg" },
   { id:"sup_mc540c",       name:"540C",                           brand:"McLaren",     category:"super", rarity:"rare",      baseCost:1800000,  milesPerSecond:9000,   clickMultiplier:7.0,  imagePath:"/vehicles/Mclaren_540C.jpg" },
@@ -88,7 +81,7 @@ export const CARS: Car[] = [
   { id:"sup_lb_gal_sl",    name:"Gallardo Superleggera",          brand:"Lamborghini", category:"super", rarity:"legendary", baseCost:7000000,  milesPerSecond:35000,  clickMultiplier:10.0, imagePath:"/vehicles/Lamborghini_Gallardo_Superleggera.avif" },
   { id:"sup_mc650s",       name:"650S",                           brand:"McLaren",     category:"super", rarity:"legendary", baseCost:7500000,  milesPerSecond:37500,  clickMultiplier:10.2, imagePath:"/vehicles/Mclaren_650S.jpg" },
   { id:"sup_mc650s_sp",    name:"650S Spider",                    brand:"McLaren",     category:"super", rarity:"legendary", baseCost:8000000,  milesPerSecond:40000,  clickMultiplier:10.5, imagePath:"/vehicles/mclaren_650S_spider.avif" },
-  { id:"sup_812",          name:"812 Superfast",                  brand:"Ferrari",     category:"super", rarity:"legendary", baseCost:8500000,  milesPerSecond:42500,  clickMultiplier:10.7 },
+  { id:"sup_812",          name:"812 Superfast",                  brand:"Ferrari",     category:"super", rarity:"legendary", baseCost:8500000,  milesPerSecond:42500,  clickMultiplier:10.7, imagePath:"/vehicles/Ferrari-812-Superfast.webp" },
   { id:"sup_lb_diablo",    name:"Diablo",                         brand:"Lamborghini", category:"super", rarity:"legendary", baseCost:9000000,  milesPerSecond:45000,  clickMultiplier:11.0, imagePath:"/vehicles/Lamborghini_Diablo.jpg" },
   { id:"sup_mc675lt",      name:"675LT",                          brand:"McLaren",     category:"super", rarity:"legendary", baseCost:9500000,  milesPerSecond:47500,  clickMultiplier:11.2, imagePath:"/vehicles/Mclaren_675lt.avif" },
   { id:"sup_mc675lt_sp",   name:"675LT Spider",                   brand:"McLaren",     category:"super", rarity:"legendary", baseCost:10000000, milesPerSecond:50000,  clickMultiplier:11.5, imagePath:"/vehicles/Mclaren_675Lt_spider.jpg" },
@@ -111,7 +104,7 @@ export const CARS: Car[] = [
   { id:"sup_mc_gts",       name:"GTS",                            brand:"McLaren",     category:"super", rarity:"prestige",  baseCost:32000000, milesPerSecond:160000, clickMultiplier:19.5, unlockRequirement:"Prestige 1", imagePath:"/vehicles/Mclaren_GTS.jpg" },
   { id:"sup_mc_artura",    name:"Artura",                         brand:"McLaren",     category:"super", rarity:"prestige",  baseCost:34000000, milesPerSecond:170000, clickMultiplier:20.0, unlockRequirement:"Prestige 1", imagePath:"/vehicles/Mclaren_Artura.jpg" },
   { id:"sup_lb_avn_s",     name:"Aventador S",                    brand:"Lamborghini", category:"super", rarity:"prestige",  baseCost:40000000, milesPerSecond:200000, clickMultiplier:21.0, unlockRequirement:"Prestige 1", imagePath:"/vehicles/Lamborghini_Aventador_SV.jpg" },
-  { id:"sup_lb_rev",       name:"Revuelto",                       brand:"Lamborghini", category:"super", rarity:"prestige",  baseCost:55000000, milesPerSecond:275000, clickMultiplier:23.0, unlockRequirement:"Prestige 2" },
+  { id:"sup_lb_rev",       name:"Revuelto",                       brand:"Lamborghini", category:"super", rarity:"prestige",  baseCost:55000000, milesPerSecond:275000, clickMultiplier:23.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Lamborghini-Revuelto.jpg" },
   { id:"sup_lotus_emira",  name:"Emira V6",                       brand:"Lotus",       category:"super", rarity:"prestige",  baseCost:70000000, milesPerSecond:350000, clickMultiplier:25.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/emira-v6.webp" },
 
   // ═══════════════════════════════════════════════════════
@@ -129,14 +122,14 @@ export const CARS: Car[] = [
   { id:"hyp_lb_avn_ult",     name:"Aventador Ultimae",           brand:"Lamborghini", category:"hypercar", rarity:"legendary", baseCost:140000000,  milesPerSecond:560000,   clickMultiplier:65.0,  unlockRequirement:"Prestige 2", imagePath:"/vehicles/lamborghini-aventador-ultimae.webp" },
   { id:"hyp_lb_veneno",      name:"Veneno",                      brand:"Lamborghini", category:"hypercar", rarity:"prestige",  baseCost:200000000,  milesPerSecond:800000,   clickMultiplier:80.0,  unlockRequirement:"Prestige 3", imagePath:"/vehicles/veneno.jpg" },
   { id:"hyp_lb_egoista",     name:"Egoista",                     brand:"Lamborghini", category:"hypercar", rarity:"prestige",  baseCost:300000000,  milesPerSecond:1200000,  clickMultiplier:95.0,  unlockRequirement:"Prestige 3", imagePath:"/vehicles/Egoista.jpg" },
-  { id:"hyp_lb_sian",        name:"Sian FKP 37",                 brand:"Lamborghini", category:"hypercar", rarity:"prestige",  baseCost:400000000,  milesPerSecond:1600000,  clickMultiplier:105.0, unlockRequirement:"Prestige 3" },
+  { id:"hyp_lb_sian",        name:"Sian FKP 37",                 brand:"Lamborghini", category:"hypercar", rarity:"prestige",  baseCost:400000000,  milesPerSecond:1600000,  clickMultiplier:105.0, unlockRequirement:"Prestige 3", imagePath:"/vehicles/Lamborghini-Sian-FKP-37.jpg" },
   { id:"hyp_lb_centenario",  name:"Centenario",                  brand:"Lamborghini", category:"hypercar", rarity:"prestige",  baseCost:600000000,  milesPerSecond:2400000,  clickMultiplier:120.0, unlockRequirement:"Prestige 4", imagePath:"/vehicles/Centenario.avif" },
-  { id:"hyp_f40",            name:"F40",                         brand:"Ferrari",     category:"hypercar", rarity:"legendary", baseCost:60000000,   milesPerSecond:240000,   clickMultiplier:42.0,  unlockRequirement:"Prestige 2" },
+  { id:"hyp_f40",            name:"F40",                         brand:"Ferrari",     category:"hypercar", rarity:"legendary", baseCost:60000000,   milesPerSecond:240000,   clickMultiplier:42.0,  unlockRequirement:"Prestige 2", imagePath:"/vehicles/Ferrari-F40.jpg" },
   { id:"hyp_f50",            name:"F50",                         brand:"Ferrari",     category:"hypercar", rarity:"legendary", baseCost:90000000,   milesPerSecond:360000,   clickMultiplier:52.0,  unlockRequirement:"Prestige 2", imagePath:"/vehicles/f50.webp" },
   { id:"hyp_enzo",           name:"Enzo Ferrari",                brand:"Ferrari",     category:"hypercar", rarity:"legendary", baseCost:130000000,  milesPerSecond:520000,   clickMultiplier:62.0,  unlockRequirement:"Prestige 2", imagePath:"/vehicles/ferrari-enzo.jpg" },
-  { id:"hyp_laferrari",      name:"LaFerrari",                   brand:"Ferrari",     category:"hypercar", rarity:"prestige",  baseCost:180000000,  milesPerSecond:720000,   clickMultiplier:78.0,  unlockRequirement:"Prestige 3" },
+  { id:"hyp_laferrari",      name:"LaFerrari",                   brand:"Ferrari",     category:"hypercar", rarity:"prestige",  baseCost:180000000,  milesPerSecond:720000,   clickMultiplier:78.0,  unlockRequirement:"Prestige 3", imagePath:"/vehicles/Ferrari-LaFerrari.jpg" },
   { id:"hyp_f80",            name:"F80",                         brand:"Ferrari",     category:"hypercar", rarity:"prestige",  baseCost:280000000,  milesPerSecond:1120000,  clickMultiplier:98.0,  unlockRequirement:"Prestige 3", imagePath:"/vehicles/f80.jpg" },
-  { id:"hyp_mc_f1",          name:"F1",                          brand:"McLaren",     category:"hypercar", rarity:"legendary", baseCost:80000000,   milesPerSecond:320000,   clickMultiplier:50.0,  unlockRequirement:"Prestige 2" },
+  { id:"hyp_mc_f1",          name:"F1",                          brand:"McLaren",     category:"hypercar", rarity:"legendary", baseCost:80000000,   milesPerSecond:320000,   clickMultiplier:50.0,  unlockRequirement:"Prestige 2", imagePath:"/vehicles/McLaren-F1.jpg" },
   { id:"hyp_mc_f1lm",        name:"F1 LM",                       brand:"McLaren",     category:"hypercar", rarity:"prestige",  baseCost:150000000,  milesPerSecond:600000,   clickMultiplier:70.0,  unlockRequirement:"Prestige 3", imagePath:"/vehicles/Mclaren_f1_lm.webp" },
   { id:"hyp_mc_f1gt",        name:"F1 GT",                       brand:"McLaren",     category:"hypercar", rarity:"prestige",  baseCost:200000000,  milesPerSecond:800000,   clickMultiplier:82.0,  unlockRequirement:"Prestige 3", imagePath:"/vehicles/Mclaren_f1_gt.avif" },
   { id:"hyp_mc_p1",          name:"P1",                          brand:"McLaren",     category:"hypercar", rarity:"legendary", baseCost:100000000,  milesPerSecond:400000,   clickMultiplier:55.0,  unlockRequirement:"Prestige 2", imagePath:"/vehicles/Mclaren_P1.webp" },
@@ -252,7 +245,7 @@ export const CARS: Car[] = [
   { id:"air_b707",         name:"Boeing 707",               brand:"Boeing",       category:"aircraft", rarity:"legendary", baseCost:4000000000,  milesPerSecond:16000000,  clickMultiplier:130.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Boeing_707.jpg" },
   { id:"air_b717",         name:"Boeing 717",               brand:"Boeing",       category:"aircraft", rarity:"legendary", baseCost:5000000000,  milesPerSecond:20000000,  clickMultiplier:140.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Boeing 717.jpg" },
   { id:"air_b720",         name:"Boeing 720",               brand:"Boeing",       category:"aircraft", rarity:"legendary", baseCost:4500000000,  milesPerSecond:18000000,  clickMultiplier:135.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Boeing-720.jpg" },
-  { id:"air_b727",         name:"Boeing 727",               brand:"Boeing",       category:"aircraft", rarity:"legendary", baseCost:6000000000,  milesPerSecond:24000000,  clickMultiplier:150.0, unlockRequirement:"Prestige 2" },
+  { id:"air_b727",         name:"Boeing 727",               brand:"Boeing",       category:"aircraft", rarity:"legendary", baseCost:6000000000,  milesPerSecond:24000000,  clickMultiplier:150.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Boeing-727.jpg" },
   { id:"air_b737_200",     name:"Boeing 737-200",           brand:"Boeing",       category:"aircraft", rarity:"legendary", baseCost:5500000000,  milesPerSecond:22000000,  clickMultiplier:144.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Boeing_737-200.jpg" },
   { id:"air_b737_classic", name:'Boeing 737 "Classic"',     brand:"Boeing",       category:"aircraft", rarity:"legendary", baseCost:7000000000,  milesPerSecond:28000000,  clickMultiplier:158.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Boeing-737-classic.jpg" },
   { id:"air_b737_ng",      name:'Boeing 737 "Next Generation"',brand:"Boeing",   category:"aircraft", rarity:"legendary", baseCost:9000000000,  milesPerSecond:36000000,  clickMultiplier:170.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Boeing-737-Next-gen.jpg" },
@@ -355,7 +348,7 @@ export const CARS: Car[] = [
   { id:"ext_mig19",         name:"MiG-19 Farmer",           brand:"Mikoyan-Gurevich",category:"extreme_aircraft",rarity:"legendary",baseCost:10000000000,milesPerSecond:40000000,clickMultiplier:132.0, unlockRequirement:"Prestige 2", imagePath:"/vehicles/Mig-19.jpg" },
   { id:"ext_mig21",         name:"MiG-21 Fishbed",          brand:"Mikoyan-Gurevich",category:"extreme_aircraft",rarity:"legendary",baseCost:12000000000,milesPerSecond:48000000,clickMultiplier:140.0, unlockRequirement:"Prestige 3", imagePath:"/vehicles/mig-21_fishbed.webp" },
   { id:"ext_mig23",         name:"MiG-23",                  brand:"Mikoyan-Gurevich",category:"extreme_aircraft",rarity:"prestige", baseCost:20000000000,milesPerSecond:80000000,clickMultiplier:172.0, unlockRequirement:"Prestige 3", imagePath:"/vehicles/Mig-23.jpg" },
-  { id:"ext_mig25",         name:"MiG-25 Foxbat",           brand:"Mikoyan-Gurevich",category:"extreme_aircraft",rarity:"prestige", baseCost:35000000000,milesPerSecond:140000000,clickMultiplier:218.0,unlockRequirement:"Prestige 3" },
+  { id:"ext_mig25",         name:"MiG-25 Foxbat",           brand:"Mikoyan-Gurevich",category:"extreme_aircraft",rarity:"prestige", baseCost:35000000000,milesPerSecond:140000000,clickMultiplier:218.0,unlockRequirement:"Prestige 3", imagePath:"/vehicles/MiG-25-Foxbat.jpg" },
   { id:"ext_mig29",         name:"MiG-29",                  brand:"Mikoyan-Gurevich",category:"extreme_aircraft",rarity:"prestige", baseCost:45000000000,milesPerSecond:180000000,clickMultiplier:238.0,unlockRequirement:"Prestige 4", imagePath:"/vehicles/Mig-29.avif" },
   { id:"ext_sr71",          name:"SR-71 Blackbird",         brand:"Lockheed",     category:"extreme_aircraft",rarity:"prestige",  baseCost:200000000000,milesPerSecond:800000000, clickMultiplier:550.0, unlockRequirement:"Prestige 5", imagePath:"/vehicles/sr-71_blackbird.webp" },
   { id:"ext_xf84h",         name:"XF-84H Thunderscreech",   brand:"Republic",     category:"extreme_aircraft",rarity:"prestige",  baseCost:30000000000, milesPerSecond:120000000, clickMultiplier:205.0, unlockRequirement:"Prestige 3", imagePath:"/vehicles/XF-84H_Thunderscreech.avif" },
@@ -386,10 +379,10 @@ export const CARS: Car[] = [
   // MISSILES
   // ═══════════════════════════════════════════════════════
   { id:"mis_javelin",       name:"FGM-148 Javelin",          brand:"Raytheon/Lockheed",category:"missile",rarity:"rare",     baseCost:500000000000,  milesPerSecond:2500000000,  clickMultiplier:2000.0,  unlockRequirement:"Prestige 6", imagePath:"/vehicles/Javelin.jpg" },
-  { id:"mis_tomahawk",      name:"BGM-109 Tomahawk",         brand:"Raytheon",     category:"missile",  rarity:"legendary", baseCost:2000000000000, milesPerSecond:10000000000, clickMultiplier:5000.0,  unlockRequirement:"Prestige 6" },
-  { id:"mis_trident",       name:"UGM-133 Trident II D5",   brand:"Lockheed Martin",category:"missile", rarity:"prestige",  baseCost:8000000000000, milesPerSecond:40000000000, clickMultiplier:12000.0, unlockRequirement:"Prestige 7" },
-  { id:"mis_minuteman",     name:"LGM-30G Minuteman III",    brand:"Boeing",       category:"missile",  rarity:"prestige",  baseCost:4000000000000, milesPerSecond:20000000000, clickMultiplier:8000.0,  unlockRequirement:"Prestige 6" },
-  { id:"mis_k4",            name:"K-4 SLBM",                 brand:"DRDO",         category:"missile",  rarity:"prestige",  baseCost:8000000000000, milesPerSecond:40000000000, clickMultiplier:15000.0, unlockRequirement:"Prestige 7", imagePath:"/vehicles/K-4.jpg" },
+  { id:"mis_tomahawk",      name:"BGM-109 Tomahawk",         brand:"Raytheon",     category:"missile",  rarity:"legendary", baseCost:2000000000000, milesPerSecond:10000000000, clickMultiplier:5000.0,  unlockRequirement:"Prestige 6", imagePath:"/vehicles/BGM-109-Tomahawk.jpg" },
+  { id:"mis_trident",       name:"UGM-133 Trident II D5",   brand:"Lockheed Martin",category:"missile", rarity:"prestige",  baseCost:8000000000000, milesPerSecond:40000000000, clickMultiplier:12000.0, unlockRequirement:"Prestige 7", imagePath:"/vehicles/UGM-133-Trident-II-D5.jpg" },
+  { id:"mis_minuteman",     name:"LGM-30G Minuteman III",    brand:"Boeing",       category:"missile",  rarity:"prestige",  baseCost:4000000000000, milesPerSecond:20000000000, clickMultiplier:8000.0,  unlockRequirement:"Prestige 6", imagePath:"/vehicles/LGM-30G-Minuteman-III.jpg" },
+  { id:"mis_k4",            name:"K-4 SLBM",                 brand:"DRDO",         category:"missile",  rarity:"prestige",  baseCost:8000000000000, milesPerSecond:40000000000, clickMultiplier:15000.0, unlockRequirement:"Prestige 7", imagePath:"/vehicles/K-4-SLBM.jpg" },
 
   // ═══════════════════════════════════════════════════════
   // SPACECRAFT
@@ -459,14 +452,14 @@ export const CARS: Car[] = [
   { id:"so_betelgeuse",     name:"Betelgeuse",           brand:"Orion",         category:"space_objects",rarity:"prestige",baseCost:5e23,milesPerSecond:2.5e21,clickMultiplier:2.5e13,unlockRequirement:"Prestige 8", imagePath:"/vehicles/Betelgeuse.jpg" },
   { id:"so_milky_way",      name:"Milky Way Galaxy",     brand:"Local Group",   category:"space_objects",rarity:"prestige",baseCost:2e24,milesPerSecond:1e22,clickMultiplier:8e13, unlockRequirement:"Prestige 9", imagePath:"/vehicles/milky way galaxy.jpeg" },
   { id:"so_andromeda",      name:"Andromeda Galaxy",     brand:"Local Group",   category:"space_objects",rarity:"prestige",baseCost:1e25,milesPerSecond:5e22,clickMultiplier:2.5e14,unlockRequirement:"Prestige 9", imagePath:"/vehicles/Andromeda_Galaxy.png" },
-  { id:"so_universe",       name:"The Whole Universe",   brand:"Existence",     category:"space_objects",rarity:"prestige",baseCost:1e50,milesPerSecond:1e48,clickMultiplier:1e30, unlockRequirement:"Prestige 9" },
+  { id:"so_universe",       name:"The Whole Universe",   brand:"Existence",     category:"space_objects",rarity:"prestige",baseCost:1e50,milesPerSecond:1e48,clickMultiplier:1e30, unlockRequirement:"Prestige 9", imagePath:"/vehicles/The-Whole-Universe.jpg" },
 
   // ═══════════════════════════════════════════════════════
   // CUSTOM — Legendary Custom Builds
   // ═══════════════════════════════════════════════════════
-  { id:"cst_rr_phantom3_v16", name:"Phantom III (9.0L V16)",               brand:"Rolls-Royce",     category:"custom", rarity:"prestige", baseCost:5e20,  milesPerSecond:5e19,  clickMultiplier:5e10,  unlockRequirement:"Prestige 8", imagePath:"/vehicles/xp1proto01.webp" },
-  { id:"cst_hyperion_xp1",    name:"XP-1 (Hydrogen Hybrid)",               brand:"Hyperion",        category:"custom", rarity:"prestige", baseCost:1e21,  milesPerSecond:1e20,  clickMultiplier:1e11,  unlockRequirement:"Prestige 8", imagePath:"/vehicles/xp1proto01.webp" },
-  { id:"cst_lb_avn_x",        name:"Aventador X (8× RR Conway Turbofans)", brand:"Lamborghini",     category:"custom", rarity:"prestige", baseCost:5e21,  milesPerSecond:5e20,  clickMultiplier:5e11,  unlockRequirement:"Prestige 9" },
-  { id:"cst_ks_jesko_ult",    name:"Jesko Ultimae Absolut (3× GE CF6-6)",  brand:"Koenigsegg",      category:"custom", rarity:"prestige", baseCost:1e22,  milesPerSecond:1e21,  clickMultiplier:1e12,  unlockRequirement:"Prestige 9" },
-  { id:"cst_bob_18m",         name:"Bob (18,000,000 HP)",                   brand:"Unknown",         category:"custom", rarity:"prestige", baseCost:1e24,  milesPerSecond:1e23,  clickMultiplier:1e14,  unlockRequirement:"Prestige 9" },
+  { id:"cst_rr_phantom3_v16", name:"Phantom III (9.0L V16)",               brand:"Rolls-Royce",     category:"custom", rarity:"prestige", baseCost:5e20,  milesPerSecond:5e19,  clickMultiplier:5e10,  unlockRequirement:"Prestige 8", imagePath:"/vehicles/Rolls-Royce-Phantom-III-V16.jpg" },
+  { id:"cst_hyperion_xp1",    name:"XP-1 (Hydrogen Hybrid)",               brand:"Hyperion",        category:"custom", rarity:"prestige", baseCost:1e21,  milesPerSecond:1e20,  clickMultiplier:1e11,  unlockRequirement:"Prestige 8", imagePath:"/vehicles/Rolls-Royce-Phantom-III-V16.jpg" },
+  { id:"cst_lb_avn_x",        name:"Aventador X (8× RR Conway Turbofans)", brand:"Lamborghini",     category:"custom", rarity:"prestige", baseCost:5e21,  milesPerSecond:5e20,  clickMultiplier:5e11,  unlockRequirement:"Prestige 9", imagePath:"/vehicles/Lamborghini-Aventador-X.png" },
+  { id:"cst_ks_jesko_ult",    name:"Jesko Ultimae Absolut (3× GE CF6-6)",  brand:"Koenigsegg",      category:"custom", rarity:"prestige", baseCost:1e22,  milesPerSecond:1e21,  clickMultiplier:1e12,  unlockRequirement:"Prestige 9", imagePath:"/vehicles/Koenigsegg-Jesko-Ultimae-Absolut.png" },
+  { id:"cst_bob_18m",         name:"Bob (18,000,000 HP)",                   brand:"Unknown",         category:"custom", rarity:"prestige", baseCost:1e24,  milesPerSecond:1e23,  clickMultiplier:1e14,  unlockRequirement:"Prestige 9", imagePath:"/vehicles/Bob-18M.png" },
 ];
