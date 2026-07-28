@@ -175,9 +175,9 @@ export default function Home() {
               Buy Cars
             </Button>
           </Link>
-          <Link href="/drift">
+          <Link href="/dyno">
             <Button variant="outline" size="sm" className="border-accent/40 text-accent hover:bg-accent/10 font-bold uppercase tracking-wider">
-              Drift
+              Dyno
             </Button>
           </Link>
           <Link href="/race">
