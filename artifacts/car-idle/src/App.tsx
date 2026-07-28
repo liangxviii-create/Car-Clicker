@@ -16,6 +16,7 @@ import Prestige from "@/pages/prestige";
 import Achievements from "@/pages/achievements";
 import Challenges from "@/pages/challenges";
 import CustomGarage from "@/pages/custom-garage";
+import FlameShooter from "@/pages/flame-shooter";
 import NotFound from "@/pages/not-found";
 import { useEffect } from "react";
 import { formatNumber } from "@/lib/utils";
@@ -84,6 +85,7 @@ function Router() {
         <Route path="/challenges" component={Challenges} />
         <Route path="/prestige" component={Prestige} />
         <Route path="/custom-garage" component={CustomGarage} />
+        <Route path="/flame-shooter" component={FlameShooter} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

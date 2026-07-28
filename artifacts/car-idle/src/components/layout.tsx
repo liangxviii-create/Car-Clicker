@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useGameState } from "@/hooks/use-game-state";
 import { NamePrompt } from "@/components/name-prompt";
-import { Trophy, Home, Car, Store, Skull, Gauge, ArrowRightLeft, Flag, Medal, Flame, Wrench } from "lucide-react";
+import { Trophy, Home, Car, Store, Skull, Gauge, ArrowRightLeft, Flag, Medal, Flame, Wrench, Zap } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -19,6 +19,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { href: "/achievements", label: "Awards", icon: Medal },
     { href: "/challenges", label: "Challenges", icon: Flame },
     { href: "/custom-garage", label: "Custom", icon: Wrench },
+    { href: "/flame-shooter", label: "Flames", icon: Zap },
     { href: "/prestige", label: "Rebirth", icon: Skull },
   ];
 
@@ -102,6 +103,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           { href: "/leaderboard", icon: Trophy },
           { href: "/achievements", icon: Medal },
           { href: "/custom-garage", icon: Wrench },
+          { href: "/flame-shooter", icon: Zap },
           { href: "/prestige", icon: Skull },
         ].map(({ href, icon: Icon }) => {
           const active = location === href;

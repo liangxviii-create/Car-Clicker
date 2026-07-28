@@ -180,6 +180,11 @@ export default function Home() {
               Dyno
             </Button>
           </Link>
+          <Link href="/flame-shooter">
+            <Button variant="outline" size="sm" className="border-orange-500/40 text-orange-400 hover:bg-orange-500/10 font-bold uppercase tracking-wider">
+              🔥 Flames
+            </Button>
+          </Link>
           <Link href="/race">
             <Button variant="outline" size="sm" className="border-accent/40 text-accent hover:bg-accent/10 font-bold uppercase tracking-wider">
               Race
