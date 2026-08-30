@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useGameState, type CustomVehicle } from "@/hooks/use-game-state";
+import { useGameState, CUSTOM_VEHICLE_COST, type CustomVehicle } from "@/hooks/use-game-state";
 import { formatNumber } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,7 @@ const EMPTY_FORM: Omit<CustomVehicle, "id" | "createdAt"> = {
   engine: "",
   description: "",
   rarity: "common",
-  unlockCost: 0,
+  unlockCost: CUSTOM_VEHICLE_COST,
   imagePath: undefined,
 };
 
@@ -47,7 +47,7 @@ function CustomVehicleCard({
 }) {
   const { state, buyCustomVehicle } = useGameState();
   const count = (state.ownedCustomVehicles ?? []).filter(id => id === vehicle.id).length;
-  const cost = Math.floor(vehicle.unlockCost * Math.pow(1.15, count));
+  const cost = CUSTOM_VEHICLE_COST;
   const canAfford = state.miles >= cost;
   const mps = vehicle.horsepower * 10;
 
@@ -114,16 +114,16 @@ function CustomVehicleCard({
       <div className="flex gap-1.5 mt-auto flex-wrap">
         <Button
           onClick={() => buyCustomVehicle(vehicle.id)}
-          disabled={!canAfford && vehicle.unlockCost > 0}
+          disabled={!canAfford}
           size="sm"
           className={`
             flex-1 font-bold uppercase tracking-wider text-[10px] h-7 px-2
-            ${canAfford || vehicle.unlockCost === 0
+            ${canAfford
               ? "bg-primary hover:bg-primary/90 text-primary-foreground"
               : "bg-secondary text-muted-foreground cursor-not-allowed"}
           `}
         >
-          {vehicle.unlockCost === 0 ? "Add to Garage" : `${formatNumber(cost)} mi`}
+          {formatNumber(cost)} mi
         </Button>
         <Button
           onClick={onPublish}
@@ -279,7 +279,7 @@ export default function CustomGarage() {
           engine: vehicle.engine ?? "",
           description: vehicle.description ?? "",
           rarity: vehicle.rarity,
-          unlockCost: vehicle.unlockCost,
+          unlockCost: CUSTOM_VEHICLE_COST,
         }),
       });
       if (res.ok) {
@@ -304,7 +304,7 @@ export default function CustomGarage() {
       engine: cv.engine,
       description: cv.description,
       rarity: cv.rarity as CustomVehicle["rarity"],
-      unlockCost: cv.unlockCost,
+      unlockCost: CUSTOM_VEHICLE_COST,
       imagePath: undefined,
     });
   }
@@ -437,12 +437,12 @@ export default function CustomGarage() {
                 </label>
 
                 <label className="flex flex-col gap-1">
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Unlock Cost (miles, 0 = free)</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Purchase Cost (fixed)</span>
                   <input
                     type="number"
-                    min={0}
-                    value={form.unlockCost}
-                    onChange={e => setForm(p => ({ ...p, unlockCost: Number(e.target.value) || 0 }))}
+                    value={CUSTOM_VEHICLE_COST}
+                    readOnly
+                    disabled
                     className="bg-background border border-border/60 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary"
                   />
                 </label>

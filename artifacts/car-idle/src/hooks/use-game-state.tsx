@@ -30,6 +30,8 @@ export interface CustomVehicle {
   createdAt: number;
 }
 
+export const CUSTOM_VEHICLE_COST = 10_000_000_000_000;
+
 export interface GameState {
   playerId: string;
   playerName: string | null;
@@ -410,6 +412,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const addCustomVehicle = (v: Omit<CustomVehicle, "id" | "createdAt">) => {
     const newVehicle: CustomVehicle = {
       ...v,
+      unlockCost: CUSTOM_VEHICLE_COST,
       id: uuidv4(),
       createdAt: Date.now(),
     };
@@ -432,21 +435,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const vehicle = state.customVehicles.find(v => v.id === id);
     if (!vehicle) return;
     const count = state.ownedCustomVehicles.filter(vid => vid === id).length;
-    const cost = Math.floor(vehicle.unlockCost * Math.pow(1.15, count));
-    if (vehicle.unlockCost === 0 || state.miles >= cost) {
-      if (vehicle.unlockCost > 0) {
-        playPurchaseSound();
-        setState(prev => ({
-          ...prev,
-          miles: prev.miles - cost,
-          ownedCustomVehicles: [...(prev.ownedCustomVehicles ?? []), id],
-        }));
-      } else {
-        setState(prev => ({
-          ...prev,
-          ownedCustomVehicles: [...(prev.ownedCustomVehicles ?? []), id],
-        }));
-      }
+    const cost = CUSTOM_VEHICLE_COST;
+    if (state.miles >= cost) {
+      playPurchaseSound();
+      setState(prev => ({
+        ...prev,
+        miles: prev.miles - cost,
+        ownedCustomVehicles: [...(prev.ownedCustomVehicles ?? []), id],
+      }));
     }
   };
 
